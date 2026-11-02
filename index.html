@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bioquímica de la dislipidemia · MedON Student</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: columna editorial; cada tema = escenario animado (canvas) + panel lateral de explicación y controles */
+  --deep:#2A1858;
+  --green:#6A35D0;
+  --leaf:#9B6BEA;
+  --gold:#E3A33B;
+  --paper:#F6F3FB;
+  --ink:#22183F;
+  --muted:#5B4E7A;
+  --line:#DDD5EC;
+  --card:#FFFFFF;
+  --mint:#EEE8F8;
+  --rose:#B8433B;
+  --fd:"Outfit",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --fb:"Outfit",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 var(--fb)}
+h1,h2,h3{font-family:var(--fd);text-wrap:balance;line-height:1.15;margin:0}
+a{color:var(--green)}
+button,input,select{font:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* Barra superior */
+.top{position:sticky;top:0;z-index:20;background:var(--deep);color:#fff;border-bottom:3px solid var(--leaf)}
+.top-in{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:18px;padding:10px 20px}
+.brand{font:600 15px/1.2 var(--fd);white-space:nowrap}
+.brand small{display:block;font:400 12px var(--fb);color:#CDB4FF}
+.nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{color:#E9E1F8;text-decoration:none;font:500 13px var(--fd);padding:6px 10px;border-radius:999px;white-space:nowrap}
+.nav a:hover{background:rgba(255,255,255,.1);color:#fff}
+
+/* Portada */
+.hero{background:var(--deep);color:#fff;padding:44px 20px 40px}
+.hero-in{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:40px;align-items:center}
+.kicker{font:600 13px var(--fd);letter-spacing:.14em;text-transform:uppercase;color:var(--leaf)}
+.hero h1{font-size:clamp(32px,4.6vw,54px);margin:10px 0 14px}
+.hero p{color:#DCD0F2;max-width:58ch;margin:0 0 10px}
+.author{font:600 15px var(--fd);color:#fff;margin-top:16px}
+.author span{display:block;font:400 14px var(--fb);color:#CDB4FF}
+.toc{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:t}
+.toc a{display:flex;gap:12px;align-items:baseline;color:#fff;text-decoration:none;padding:10px 14px;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:rgba(255,255,255,.04)}
+.toc a:hover{background:rgba(43,182,115,.16);border-color:var(--leaf)}
+.toc b{font:600 13px var(--fd);color:var(--leaf);min-width:22px}
+.toc span{font:500 15px var(--fd)}
+
+/* Secciones */
+main{max-width:1240px;margin:0 auto;padding:0 20px 60px}
+.sec{padding:52px 0 8px;border-bottom:1px solid var(--line)}
+.sec-head{max-width:78ch;margin-bottom:20px}
+.eyebrow{font:600 12.5px var(--fd);letter-spacing:.14em;text-transform:uppercase;color:var(--green)}
+.sec h2{font-size:clamp(26px,3vw,36px);margin:6px 0 10px;color:var(--deep)}
+.lead{color:var(--muted);margin:0}
+.stage{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(290px,1fr);gap:18px;align-items:start}
+.stage.wide{grid-template-columns:1fr}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+canvas{display:block;width:100%;height:auto;background:#fff;touch-action:manipulation}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 14px;border-top:1px solid var(--line);background:#FCFBFE}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:7px 13px;font:500 14px var(--fd);cursor:pointer}
+.btn:hover{border-color:var(--green);color:var(--green)}
+.btn.pri{background:var(--green);border-color:var(--green);color:#fff}
+.btn.pri:hover{background:#4B25A0;color:#fff}
+.btn[aria-pressed="true"]{background:var(--deep);color:#fff;border-color:var(--deep)}
+.chk{display:inline-flex;align-items:center;gap:6px;font-size:14.5px;padding:4px 8px;border-radius:8px;cursor:pointer;user-select:none}
+.chk input{accent-color:var(--green);width:16px;height:16px}
+.rng{display:inline-flex;align-items:center;gap:8px;font-size:14px}
+.rng input{accent-color:var(--green)}
+.sp{flex:1}
+.panel{padding:18px 20px}
+.panel h3{font-size:20px;color:var(--deep);margin-bottom:6px}
+.panel p{margin:8px 0}
+.step-n{font:600 12px var(--fd);letter-spacing:.12em;text-transform:uppercase;color:var(--green)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}
+.chip{font:500 12.5px var(--fd);padding:4px 9px;border-radius:999px;background:var(--mint);color:var(--deep);border:1px solid #DCD0F2}
+.chip.warn{background:#FCEDEB;color:var(--rose);border-color:#F2CBC6}
+.chip.gold{background:#FDF3E1;color:#8A5A10;border-color:#F3DDB2}
+.note{font-size:14px;color:var(--muted);border-left:3px solid var(--gold);padding:4px 0 4px 10px;margin-top:12px}
+.clin{margin-top:12px;padding:10px 12px;border-radius:10px;background:#FCF4E6;border:1px solid #F1DDB7;font-size:15px}
+.clin b{color:#8A5A10;font-family:var(--fd);font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;display:block}
+.dots{display:flex;flex-wrap:wrap;gap:6px}
+.dot{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:#fff;font:600 13px var(--fd);color:var(--muted);cursor:pointer}
+.dot.on{background:var(--green);color:#fff;border-color:var(--green)}
+.dot.done{background:var(--mint);color:var(--deep)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:16px}
+.info{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.info h4{margin:0 0 6px;font:600 15.5px var(--fd);color:var(--deep)}
+.info p{margin:0;font-size:15px;color:var(--ink)}
+.info .tag{display:inline-block;font:600 11.5px var(--fd);letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:4px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.tabs .btn{padding:6px 11px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:15px;margin:10px 0}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-weight:600;font-variant-numeric:tabular-nums}
+.bar{display:flex;height:16px;border-radius:6px;overflow:hidden;border:1px solid var(--line);margin:6px 0}
+.bar i{display:block;height:100%;transition:width .6s ease}
+.legend{display:flex;flex-wrap:wrap;gap:8px 12px;font-size:13.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend s{display:inline-block;width:11px;height:11px;border-radius:3px;text-decoration:none}
+.apo-chip{cursor:help}
+.tip{position:fixed;z-index:50;pointer-events:none;max-width:280px;background:var(--deep);color:#fff;font-size:14px;line-height:1.4;padding:8px 11px;border-radius:9px;box-shadow:0 6px 20px rgba(0,0,0,.2);opacity:0;transition:opacity .12s}
+.tip b{font-family:var(--fd);font-weight:600;color:var(--leaf)}
+.sizes{padding:14px 16px;border-top:1px solid var(--line)}
+.sizes h4{margin:0 0 8px;font:600 13px var(--fd);color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.srow{display:grid;grid-template-columns:62px 1fr;gap:10px;align-items:center;font:500 13px var(--fd);margin:5px 0;color:var(--muted)}
+.srow.on{color:var(--deep)}
+.track{position:relative;height:12px;background:#F1EDF8;border-radius:6px}
+.track i{position:absolute;top:0;bottom:0;border-radius:6px;background:#CFC2EA}
+.srow.on .track i{background:var(--green)}
+.axis{display:grid;grid-template-columns:62px 1fr;gap:10px;font-size:12px;color:var(--muted)}
+.axis div{position:relative;height:16px}
+.axis div span{position:absolute;transform:translateX(-50%)}
+.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:12px 0}
+.tile{border:1px solid var(--line);border-radius:10px;padding:6px 4px;text-align:center}
+.tile b{display:block;font:700 20px var(--fd);font-variant-numeric:tabular-nums;color:var(--deep)}
+.tile small{font:500 11.5px var(--fd);color:var(--muted)}
+.read{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.read div{border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.read b{display:block;font:700 24px var(--fd);color:var(--deep);font-variant-numeric:tabular-nums}
+.read small{color:var(--muted);font-size:13px}
+.flag{padding:9px 12px;border-radius:10px;font-size:15px;margin-top:8px}
+.flag.ok{background:var(--mint);color:var(--deep)}
+.flag.bad{background:#FCEDEB;color:#8E2F28}
+.calc{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.calc input{width:110px;padding:7px 10px;border:1px solid var(--line);border-radius:9px}
+.calc select{padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:#fff}
+.gauge{position:relative;height:18px;border-radius:9px;background:linear-gradient(90deg,#E2D7F7 0%,#E2D7F7 30%,#F8E3B5 30%,#F8E3B5 45%,#F6C9B9 45%,#F6C9B9 70%,#E79A8E 70%);margin:16px 0 26px}
+.gauge .needle{position:absolute;top:-6px;width:4px;height:30px;background:var(--deep);border-radius:2px;transition:left .5s ease}
+.gauge .mk{position:absolute;top:22px;font-size:11.5px;color:var(--muted);transform:translateX(-50%);white-space:nowrap}
+.refs{font-size:15px;padding-left:22px;max-width:96ch}
+.refs li{margin:6px 0}
+footer{background:var(--deep);color:#DCD0F2;text-align:center;padding:26px 20px;font-size:14px}
+footer b{color:#fff;font-family:var(--fd);font-weight:600}
+@media (max-width:920px){
+  .hero-in,.stage{grid-template-columns:1fr}
+  .brand small{display:none}
+}
+@media (max-width:520px){
+  body{font-size:16px}
+  .tiles{grid-template-columns:repeat(3,1fr)}
+  .read{grid-template-columns:1fr}
+}
+.mtop{background:#fff;border-bottom:1px solid var(--line)}.mtop .in{max-width:1320px;margin:0 auto;padding:8px 16px;display:flex;align-items:center}.mtop a{display:flex;align-items:center;gap:16px;text-decoration:none;color:#2A1858;min-width:0}.mtop .lg{width:132px;height:54px;overflow:hidden;position:relative;flex-shrink:0}.mtop .lg img{position:absolute;width:149px;left:-8px;top:-49px;mix-blend-mode:multiply;filter:hue-rotate(125deg)}.mtop .t{display:flex;flex-direction:column;gap:2px;padding-left:16px;border-left:1px solid var(--line);min-width:0}.mtop .t b{font-family:var(--fd);font-size:17px;font-weight:700;line-height:1.2}.mtop .t small{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;color:#6A35D0}@media (max-width:560px){.mtop .lg{width:104px;height:44px}.mtop .lg img{width:118px;left:-6px;top:-39px}.mtop .t b{font-size:15px}.mtop .t{padding-left:12px}}
+</style>
+</head>
+<body>
+
+<div class="mtop"><div class="in"><a href="/"><div class="lg"><img src="data:image/webp;base64,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ZUlEeCx4bXA6aWlkOjc1YTk5NWRhLTUxOGItNDc0YS05Njg0LWViMTljYzI5OTE3OWxyZWxhdGlvbnNoaXBocGFyZW50T2YAAAHianVtYgAAAEFqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmFjdGlvbnMudjIAAAAAGGMyc2hMIo9lqq9mx/fsS8nfs+mnAAABmWNib3KiZ2FjdGlvbnOComZhY3Rpb25rYzJwYS5vcGVuZWRqcGFyYW1ldGVyc6FraW5ncmVkaWVudHOBomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCDWQz5RmTuGmX41GQymIv44K6MkGkJIFT7FgS+rxaPb9KRmYWN0aW9ueB1jb20uYW50aHJvcGljLmNsYXVkZS5wcm92aWRlZGpwYXJhbWV0ZXJzoXgfY29tLmFudGhyb3BpYy5vcmlnaW4tY29uZmlkZW5jZWd1bmtub3dua2Rlc2NyaXB0aW9ueGZDbGF1ZGUgcHJvdmlkZWQgdGhpcyBmaWxlIGF0IHRoZSByZXF1ZXN0IG9mIGEgdXNlciBhbmQgbWF5IGhhdmUgY3JlYXRlZCBvciBtb2RpZmllZCB0aGUgZmlsZSBjb250ZW50cy5tc29mdHdhcmVBZ2VudKFkbmFtZWZDbGF1ZGVyYWxsQWN0aW9uc0luY2x1ZGVk9QAAAMhqdW1iAAAAQGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaGFzaC5kYXRhAAAAABhjMnNoj6qbBcWQ0iILJyjhqFS5CwAAAIBjYm9ypWNhbGdmc2hhMjU2Y3BhZEwAAAAAAAAAAAAAAABkaGFzaFggfe2JEN1TlJJd+ri+enTuqI9Xi0dqdIDjnQCmzm9WEQ1kbmFtZW5qdW1iZiBtYW5pZmVzdGpleGNsdXNpb25zgaJlc3RhcnQZM5xmbGVuZ3RoGRaHAAACPmp1bWIAAAAnanVtZGMyY2wAEQAQgAAAqgA4m3EDYzJwYS5jbGFpbS52MgAAAAIPY2JvcqVjYWxnZnNoYTI1NmlzaWduYXR1cmV4TXNlbGYjanVtYmY9L2MycGEvdXJuOmMycGE6OThjYzI4OGYtN2MyZC00MjllLWIzMGUtYjJlMzA0MmIzODhjL2MycGEu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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9lhA2jMsuWKh5Jz64XBcNcH7bCv+orl1SLeFiBfCGVdT6QmlKHjQz/ur5D5GM5nlgbrjBbqP6V9/KEz83oD1Kty4OgA=" alt="MedON"></div><div class="t"><b>Bioquímica de la dislipidemia</b><small>STUDENT · BIOQUÍMICA</small></div></a></div></div>
+<header class="top">
+  <div class="top-in">
+    <nav class="nav" aria-label="Secciones">
+      <a href="#trigliceridos">Triglicéridos</a>
+      <a href="#colesterol">Colesterol</a>
+      <a href="#estructura">Lipoproteínas</a>
+      <a href="#metabolismo">Vías</a>
+      <a href="#placa">Placa</a>
+      <a href="#apob">ApoB-100</a>
+      <a href="#lpa">Lp(a)</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="kicker">Student · Bioquímica</div>
+      <h1>Bioquímica de la dislipidemia</h1>
+      <p>Una web para ver cómo se fabrican los triglicéridos y el colesterol, cómo viajan empaquetados en lipoproteínas, cómo se transforman las VLDL en IDL y LDL, y cómo su exceso termina formando la placa aterosclerótica.</p>
+      <p>Cada sección tiene una animación que puedes pausar, avanzar paso a paso o modificar con controles.</p>
+      
+    </div>
+    <ol class="toc">
+      <li><a href="#trigliceridos"><b>01</b><span>Formación de los triglicéridos</span></a></li>
+      <li><a href="#colesterol"><b>02</b><span>Síntesis del colesterol</span></a></li>
+      <li><a href="#estructura"><b>03</b><span>Estructura de las lipoproteínas</span></a></li>
+      <li><a href="#metabolismo"><b>04</b><span>Vías centrífuga y centrípeta</span></a></li>
+      <li><a href="#placa"><b>05</b><span>Placa aterosclerótica paso a paso</span></a></li>
+      <li><a href="#apob"><b>06</b><span>ApoB-100 y el receptor LDL</span></a></li>
+      <li><a href="#lpa"><b>07</b><span>Lipoproteína(a)</span></a></li>
+    </ol>
+  </div>
+</section>
+
+<main>
+
+<!-- 01 TRIGLICÉRIDOS -->
+<section class="sec" id="trigliceridos">
+  <div class="sec-head">
+    <div class="eyebrow">01 · Síntesis de lípidos</div>
+    <h2>Formación de los triglicéridos</h2>
+    <p class="lead">En hígado y tejido adiposo, el triacilglicerol se arma en el retículo endoplásmico sobre un esqueleto de glicerol-3-fosfato. Se agregan tres ácidos grasos activados, uno por cada carbono (sn-1, sn-2 y sn-3).</p>
+  </div>
+  <div class="stage">
+    <div class="card">
+      <canvas id="cvTG" aria-label="Animación de la síntesis de triacilglicerol"></canvas>
+      <div class="ctrl">
+        <button class="btn" id="tgPrev">Anterior</button>
+        <button class="btn pri" id="tgNext">Siguiente paso</button>
+        <button class="btn" id="tgPlay" aria-pressed="false">Reproducir todo</button>
+        <span class="sp"></span>
+        <button class="btn" id="tgReset">Reiniciar</button>
+      </div>
+    </div>
+    <aside class="card panel" aria-live="polite">
+      <div class="step-n" id="tgN">Paso 0 de 5</div>
+      <h3 id="tgT"></h3>
+      <div class="chips" id="tgC"></div>
+      <p id="tgX"></p>
+      <div class="note" id="tgNote"></div>
+    </aside>
+  </div>
+</section>
+
+<!-- 02 COLESTEROL -->
+<section class="sec" id="colesterol">
+  <div class="sec-head">
+    <div class="eyebrow">02 · Vía del mevalonato</div>
+    <h2>Síntesis del colesterol: de 2 carbonos a 27</h2>
+    <p class="lead">Todo el colesterol se construye con unidades de acetil-CoA (C2). Observa cómo se suman los carbonos, cómo se cierra el núcleo esteroideo y qué ocurre cuando una estatina bloquea la HMG-CoA reductasa.</p>
+  </div>
+  <div class="stage">
+    <div class="card">
+      <canvas id="cvCH" aria-label="Animación de la síntesis de colesterol"></canvas>
+      <div class="ctrl">
+        <button class="btn" id="chPrev">Anterior</button>
+        <button class="btn pri" id="chNext">Siguiente paso</button>
+        <button class="btn" id="chPlay" aria-pressed="false">Reproducir todo</button>
+        <label class="chk"><input type="checkbox" id="chStatin"> Añadir estatina</label>
+        <span class="sp"></span>
+        <button class="btn" id="chReset">Reiniciar</button>
+      </div>
+    </div>
+    <aside class="card panel" aria-live="polite">
+      <div class="step-n" id="chN"></div>
+      <h3 id="chT"></h3>
+      <div class="chips" id="chC"></div>
+      <p id="chX"></p>
+      <div class="clin" id="chStat" hidden><b>Efecto de la estatina</b>Inhibe de forma competitiva la HMG-CoA reductasa. Al bajar el colesterol del hepatocito se activa SREBP-2, aumentan los receptores LDL en la membrana y la LDL plasmática desciende.</div>
+    </aside>
+  </div>
+</section>
+
+<!-- 03 ESTRUCTURA -->
+<section class="sec" id="estructura">
+  <div class="sec-head">
+    <div class="eyebrow">03 · Arquitectura</div>
+    <h2>Estructura de las lipoproteínas</h2>
+    <p class="lead">Los lípidos no se disuelven en el plasma, así que viajan en partículas esféricas. Un núcleo hidrofóbico de triglicéridos y ésteres de colesterol queda envuelto por una monocapa de fosfolípidos, colesterol libre y apolipoproteínas. Pasa el cursor sobre la partícula para identificar cada componente.</p>
+  </div>
+  <div class="stage">
+    <div class="card">
+      <canvas id="cvST" aria-label="Partícula de lipoproteína en corte transversal"></canvas>
+      <div class="ctrl">
+        <label class="chk"><input type="checkbox" id="lyPL" checked> Fosfolípidos</label>
+        <label class="chk"><input type="checkbox" id="lyFC" checked> Colesterol libre</label>
+        <label class="chk"><input type="checkbox" id="lyCore" checked> Núcleo</label>
+        <label class="chk"><input type="checkbox" id="lyApo" checked> Apolipoproteínas</label>
+      </div>
+      <div class="sizes">
+        <h4>Tamaño real comparado (eje logarítmico, nm)</h4>
+        <div id="sizeRows"></div>
+        <div class="axis"><span></span><div id="sizeAxis"></div></div>
+      </div>
+    </div>
+    <aside class="card panel">
+      <div class="tabs" id="stTabs" role="tablist"></div>
+      <h3 id="stName"></h3>
+      <p id="stFn"></p>
+      <dl class="kv">
+        <dt>Diámetro</dt><dd id="stD"></dd>
+        <dt>Densidad (g/mL)</dt><dd id="stDen"></dd>
+        <dt>Origen</dt><dd id="stO"></dd>
+      </dl>
+      <div class="step-n">Composición aproximada (% de masa)</div>
+      <div class="bar" id="stBar"></div>
+      <div class="legend" id="stLeg"></div>
+      <div class="step-n" style="margin-top:14px">Apolipoproteínas</div>
+      <div class="chips" id="stApos"></div>
+    </aside>
+  </div>
+</section>
+
+<!-- 04 METABOLISMO -->
+<section class="sec" id="metabolismo">
+  <div class="sec-head">
+    <div class="eyebrow">04 · Transporte de lípidos</div>
+    <h2>Vías exógena, centrífuga y centrípeta</h2>
+    <p class="lead">La vía centrífuga lleva lípidos del hígado a la periferia: VLDL → IDL → LDL. La vía centrípeta (transporte reverso con HDL) devuelve el colesterol de la periferia al hígado. Toca cualquier partícula para seguirla y ver cómo cambia.</p>
+  </div>
+  <div class="stage">
+    <div class="card">
+      <canvas id="cvMT" aria-label="Simulación del transporte de lipoproteínas"></canvas>
+      <div class="ctrl">
+        <button class="btn" id="mtPlay" aria-pressed="true">Pausar</button>
+        <label class="rng">Velocidad <input type="range" id="mtSpeed" min="0.4" max="2.2" step="0.1" value="1"></label>
+        <span class="sp"></span>
+        <label class="chk"><input type="checkbox" id="mtExo" checked> Exógena</label>
+        <label class="chk"><input type="checkbox" id="mtEndo" checked> Centrífuga</label>
+        <label class="chk"><input type="checkbox" id="mtRev" checked> Centrípeta</label>
+        <label class="chk"><input type="checkbox" id="mtHyper"> Hipercolesterolemia</label>
+      </div>
+    </div>
+    <aside class="card panel" aria-live="polite">
+      <div class="step-n">Partículas en circulación</div>
+      <div class="tiles">
+        <div class="tile"><b id="cQM">0</b><small>QM</small></div>
+        <div class="tile"><b id="cVL">0</b><small>VLDL</small></div>
+        <div class="tile"><b id="cID">0</b><small>IDL</small></div>
+        <div class="tile"><b id="cLD">0</b><small>LDL</small></div>
+        <div class="tile"><b id="cHD">0</b><small>HDL</small></div>
+      </div>
+      <h3 id="mtT">Toca una partícula</h3>
+      <p id="mtX">Sigue su recorrido: verás cuándo pierde triglicéridos por la lipoproteína lipasa (LPL), cuándo la lipasa hepática la convierte en LDL o cuándo la HDL recoge colesterol de la periferia.</p>
+      <div class="legend" style="margin-top:10px">
+        <span><s style="background:#F6CD62"></s>Quilomicrón</span>
+        <span><s style="background:#F2A541"></s>VLDL</span>
+        <span><s style="background:#E07F33"></s>IDL</span>
+        <span><s style="background:#B4532A"></s>LDL</span>
+        <span><s style="background:#5E9FD8"></s>HDL</span>
+      </div>
+      <div class="note">Activa <b>Hipercolesterolemia</b>: aumenta la producción de VLDL y más LDL termina retenida en la íntima arterial (recuadro inferior derecho).</div>
+    </aside>
+  </div>
+</section>
+
+<!-- 05 PLACA -->
+<section class="sec" id="placa">
+  <div class="sec-head">
+    <div class="eyebrow">05 · Aterogénesis</div>
+    <h2>Formación de la placa aterosclerótica, paso a paso</h2>
+    <p class="lead">La retención de lipoproteínas con ApoB en la íntima es el evento iniciador. Desde ahí, la inflamación transforma una estría grasa en un fibroateroma capaz de romperse.</p>
+  </div>
+  <div class="stage">
+    <div class="card">
+      <canvas id="cvPL" aria-label="Animación de la formación de la placa"></canvas>
+      <div class="ctrl">
+        <div class="dots" id="plDots"></div>
+        <span class="sp"></span>
+        <button class="btn" id="plPrev">Anterior</button>
+        <button class="btn pri" id="plNext">Siguiente</button>
+        <button class="btn" id="plPlay" aria-pressed="false">Secuencia completa</button>
+      </div>
+    </div>
+    <aside class="card panel" aria-live="polite">
+      <div class="step-n" id="plN"></div>
+      <h3 id="plT"></h3>
+      <p id="plX"></p>
+      <div class="chips" id="plC"></div>
+      <div class="clin"><b>Correlación clínica</b><span id="plK"></span></div>
+    </aside>
+  </div>
+</section>
+
+<!-- 06 APOB -->
+<section class="sec" id="apob">
+  <div class="sec-head">
+    <div class="eyebrow">06 · Apolipoproteína B-100</div>
+    <h2>ApoB-100: contar partículas en lugar de medir colesterol</h2>
+    <p class="lead">Cada VLDL, IDL, LDL y Lp(a) lleva exactamente una molécula de ApoB-100, que no se intercambia entre partículas. Por eso la ApoB plasmática es un conteo directo de partículas aterogénicas.</p>
+  </div>
+  <div class="grid2" style="margin:0 0 18px">
+    <div class="info"><span class="tag">Gen y tamaño</span><h4>Una proteína gigante</h4><p>Gen <i>APOB</i> (cromosoma 2). La ApoB-100 tiene 4536 aminoácidos (~550 kDa) y envuelve la partícula como un cinturón.</p></div>
+    <div class="info"><span class="tag">ApoB-48</span><h4>La versión intestinal</h4><p>En el enterocito, la enzima APOBEC-1 edita el ARNm (CAA→UAA) y crea un codón de parada: resulta el 48 % N-terminal, sin el dominio de unión al receptor LDL.</p></div>
+    <div class="info"><span class="tag">Ensamblaje</span><h4>MTP la carga de lípidos</h4><p>En el retículo del hepatocito, la proteína microsomal de transferencia de triglicéridos (MTP) carga lípidos en la ApoB-100 naciente y forma la VLDL.</p></div>
+    <div class="info"><span class="tag">Ligando</span><h4>Llave del receptor LDL</h4><p>El sitio B de la ApoB-100 se une al receptor LDL. Ese es el mecanismo principal de depuración hepática de LDL.</p></div>
+  </div>
+  <div class="stage">
+    <div class="card">
+      <canvas id="cvAB" aria-label="Partículas LDL según tamaño"></canvas>
+      <div class="ctrl">
+        <label class="rng">LDL-C <input type="range" id="abC" min="70" max="200" step="5" value="120"> <b id="abCv">120</b> mg/dL</label>
+        <label class="rng">Tamaño LDL <input type="range" id="abD" min="19" max="27" step="0.5" value="26"> <b id="abDv">26</b> nm</label>
+        <span class="sp"></span>
+        <button class="btn" id="abA">Paciente A</button>
+        <button class="btn" id="abB">Paciente B</button>
+      </div>
+    </div>
+    <aside class="card panel" aria-live="polite">
+      <div class="step-n">Mismo colesterol, distinto número de partículas</div>
+      <h3>Las bolsas del mercado</h3>
+      <p>El LDL-C es el peso total de lo que se lleva; la ApoB es el número de bolsas. Con partículas pequeñas y densas, el mismo colesterol se reparte en muchas más partículas, y cada una puede penetrar la pared arterial.</p>
+      <div class="read">
+        <div><b id="abLDL">120</b><small>LDL-C (mg/dL)</small></div>
+        <div><b id="abApo">0</b><small>ApoB estimada (mg/dL)</small></div>
+      </div>
+      <div class="flag ok" id="abFlag"></div>
+      <div class="note">Modelo didáctico con valores ilustrativos. Metas orientativas de ApoB (ESC/EAS): &lt; 65 mg/dL en riesgo muy alto, &lt; 80 en alto y &lt; 100 en moderado.</div>
+    </aside>
+  </div>
+  <div class="stage" style="margin-top:18px">
+    <div class="card">
+      <canvas id="cvRC" aria-label="Simulación del receptor LDL y PCSK9"></canvas>
+      <div class="ctrl">
+        <label class="chk"><input type="checkbox" id="rcP" checked> PCSK9 activa</label>
+        <label class="chk"><input type="checkbox" id="rcAb"> Anticuerpo anti-PCSK9</label>
+        <label class="chk"><input type="checkbox" id="rcSt"> Estatina</label>
+        <span class="sp"></span>
+        <button class="btn" id="rcReset">Reiniciar</button>
+      </div>
+    </div>
+    <aside class="card panel">
+      <div class="step-n">Receptor LDL (Goldstein y Brown)</div>
+      <h3>El ciclo del receptor</h3>
+      <p>1. La ApoB-100 se une al receptor en una fosa recubierta de clatrina. 2. El complejo se internaliza. 3. En el endosoma ácido, la LDL se libera y el receptor regresa a la membrana (hasta unas 150 veces). 4. En el lisosoma, la LDL se degrada y libera colesterol libre, que frena la HMG-CoA reductasa y SREBP-2.</p>
+      <p><b>PCSK9</b> se une al receptor y lo desvía hacia el lisosoma: el receptor ya no recicla. Quedan menos receptores y sube la LDL plasmática. Prueba a activar el anticuerpo o la estatina y mira la curva.</p>
+    </aside>
+  </div>
+</section>
+
+<!-- 07 LP(a) -->
+<section class="sec" id="lpa">
+  <div class="sec-head">
+    <div class="eyebrow">07 · Lipoproteína(a)</div>
+    <h2>Lp(a): una LDL con anzuelo</h2>
+    <p class="lead">La Lp(a) es una partícula tipo LDL cuya ApoB-100 está unida a la apolipoproteína(a) por un puente disulfuro. La apo(a) es una cadena de dominios kringle que se parece al plasminógeno. Su concentración depende en más del 90 % del gen <i>LPA</i> y casi no cambia en la vida.</p>
+  </div>
+  <div class="stage">
+    <div class="card">
+      <canvas id="cvLA" aria-label="Estructura animada de la lipoproteína(a)"></canvas>
+      <div class="ctrl">
+        <label class="rng">Copias de KIV-2 <input type="range" id="laN" min="1" max="40" step="1" value="12"> <b id="laNv">12</b></label>
+        <label class="chk"><input type="checkbox" id="laPg"> Comparar con plasminógeno</label>
+      </div>
+    </div>
+    <aside class="card panel" aria-live="polite">
+      <div class="step-n">Tamaño de la isoforma</div>
+      <h3 id="laIso"></h3>
+      <p id="laIsoX"></p>
+      <div class="bar"><i id="laLvl" style="background:var(--rose);width:50%"></i></div>
+      <div class="legend"><span>Concentración plasmática esperada (tendencia)</span></div>
+      <div class="step-n" style="margin-top:16px">Interpreta un valor de Lp(a)</div>
+      <div class="calc">
+        <label for="laVal">Valor</label>
+        <input type="number" id="laVal" value="62" min="0" step="1" inputmode="decimal">
+        <select id="laU" aria-label="Unidad"><option value="mg">mg/dL</option><option value="nmol">nmol/L</option></select>
+      </div>
+      <div class="gauge" id="laG"><div class="needle" id="laNeedle"></div></div>
+      <div class="flag" id="laFlag"></div>
+      <div class="note">Se prefiere informar en nmol/L. La conversión desde mg/dL no es exacta porque depende del tamaño de la isoforma.</div>
+    </aside>
+  </div>
+  <div class="grid2">
+    <div class="info"><span class="tag">Aterogénica</span><h4>Lleva colesterol y ApoB</h4><p>Como la LDL, entra y queda retenida en la íntima, y aporta su colesterol a la placa.</p></div>
+    <div class="info"><span class="tag">Proinflamatoria</span><h4>Transporta fosfolípidos oxidados</h4><p>Es el principal transportador plasmático de fosfolípidos oxidados (OxPL). Estos activan monocitos y células endoteliales.</p></div>
+    <div class="info"><span class="tag">Antifibrinolítica</span><h4>Imita al plasminógeno</h4><p>Sus kringle compiten con el plasminógeno por la fibrina, pero su dominio proteasa es inactivo: frena la fibrinólisis y favorece la trombosis.</p></div>
+    <div class="info"><span class="tag">Medición</span><h4>Una vez en la vida</h4><p>Las guías ESC/EAS 2025 y ACC/AHA 2026 recomiendan medirla al menos una vez en todos los adultos. Además se asocia con estenosis aórtica calcificada.</p></div>
+  </div>
+</section>
+
+
+
+</main>
+
+<footer style="padding:24px 16px 36px;background:transparent"><div style="max-width:1240px;margin:0 auto;background:#2A1858;color:#E9E1F8;border-radius:16px;padding:22px 18px;display:grid;gap:10px;justify-items:center;text-align:center"><p style="margin:0;font-size:15px;line-height:1.6">Herramienta de apoyo educativo para profesionales y estudiantes de la salud. Los valores de las animaciones son ilustrativos: para decisiones clínicas consulta las guías citadas.</p><p style="margin:0;font-size:13px;line-height:1.55;opacity:.85;max-width:84ch">Basado en: Rodwell VW, et al. Harper. Bioquímica ilustrada, 31.ª ed., 2018 · Nelson DL, Cox MM. Lehninger Principles of Biochemistry, 8.ª ed., 2021 · Feingold KR. Introduction to Lipids and Lipoproteins. Endotext (NCBI) · Coleman RA, Mashek DG. Chem Rev 2011 · Brown MS, Goldstein JL. Science 1986 y ATVB 2009 · Rosenson RS, et al. Circulation 2012 · Tabas I, et al. Circulation 2007 · Libby P, et al. Nat Rev Dis Primers 2019; Nature 2021 · Ference BA, et al. Eur Heart J 2017 · Borén J, et al. Eur Heart J 2020 · Sniderman AD, et al. JAMA Cardiol 2019 · Kronenberg F, et al. Consenso EAS sobre Lp(a). Eur Heart J 2022 · Guías ESC/EAS de dislipidemias 2019 y actualización focalizada 2025 · Guía ACC/AHA de manejo de la dislipidemia 2026 · Friedewald WT, et al. Clin Chem 1972.</p><p style="margin:0;font-size:13px;opacity:.8">Contenido elaborado de forma independiente por MedON; no está afiliado ni avalado por las organizaciones citadas.</p><p style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.04em;opacity:.85">© 2026 MedON · Todos los derechos reservados.</p></div></footer>
+
+<div class="tip" id="tip" role="tooltip"></div>
+
+<script>
+"use strict";
+/* ============ Núcleo de animación ============ */
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const TAU = Math.PI * 2;
+const FB = 'Outfit, system-ui, sans-serif', FD = 'Outfit, system-ui, sans-serif';
+const COL = {deep:'#2A1858', green:'#6A35D0', leaf:'#9B6BEA', gold:'#E3A33B', ink:'#22183F', muted:'#5B4E7A', line:'#DDD5EC',
+  tg:'#F2B53F', ce:'#D9772B', fc:'#8A5A2E', pl:'#5FB49A', plTail:'#A8D5C6', apoB:'#8E2A4A', apoB48:'#C2477A', apoA:'#2F7FC1',
+  apoC:'#2BA39A', apoE:'#7A5AAE', apoa:'#C9443D', oxy:'#C9524A'};
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const ease = t => { t = clamp(t, 0, 1); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+const rnd = (a, b) => a + Math.random() * (b - a);
+function T(c, s, x, y, o = {}) {
+  c.font = `${o.w || 600} ${o.size || 13}px ${o.d ? FD : FB}`;
+  c.fillStyle = o.color || COL.ink; c.textAlign = o.align || 'center'; c.textBaseline = o.base || 'middle';
+  c.fillText(s, x, y);
+}
+function circ(c, x, y, r, fill, stroke, lw) {
+  c.beginPath(); c.arc(x, y, Math.max(.1, r), 0, TAU);
+  if (fill) { c.fillStyle = fill; c.fill(); }
+  if (stroke) { c.strokeStyle = stroke; c.lineWidth = lw || 1; c.stroke(); }
+}
+function rrect(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+
+const scenes = [];
+function Scene(id, W, H) {
+  const cv = document.getElementById(id);
+  const s = {cv, ctx: cv.getContext('2d'), W, H, k: 1, visible: true, playing: true, speed: 1, t: 0, update() {}, draw() {}};
+  cv.style.aspectRatio = W + ' / ' + H;
+  scenes.push(s); fit(s); io.observe(cv); return s;
+}
+function fit(s) {
+  const w = s.cv.clientWidth || s.W, d = Math.min(2, window.devicePixelRatio || 1);
+  s.cv.width = Math.round(w * d); s.cv.height = Math.round(w * s.H / s.W * d); s.k = s.cv.width / s.W;
+}
+const io = new IntersectionObserver(es => es.forEach(e => { const s = scenes.find(x => x.cv === e.target); if (s) s.visible = e.isIntersecting; }), {rootMargin: '120px'});
+addEventListener('resize', () => scenes.forEach(fit));
+function ptr(s, e) { const r = s.cv.getBoundingClientRect(); return {x: (e.clientX - r.left) * s.W / r.width, y: (e.clientY - r.top) * s.H / r.height}; }
+const tip = document.getElementById('tip');
+function showTip(html, e) { tip.innerHTML = html; tip.style.opacity = 1; const x = Math.min(innerWidth - 300, e.clientX + 14); tip.style.left = x + 'px'; tip.style.top = (e.clientY + 16) + 'px'; }
+function hideTip() { tip.style.opacity = 0; }
+let lastT = performance.now();
+function frame(now) {
+  const dt = Math.min(.05, (now - lastT) / 1000); lastT = now;
+  for (const s of scenes) {
+    if (!s.visible) continue;
+    const d = s.playing ? dt * s.speed : 0; s.t += d; s.update(d, dt);
+    const c = s.ctx; c.setTransform(s.k, 0, 0, s.k, 0, 0); c.clearRect(0, 0, s.W, s.H); c.globalAlpha = 1; s.draw(c, s.t);
+  }
+  requestAnimationFrame(frame);
+}
+const $ = id => document.getElementById(id);
+function chips(el, arr) { el.innerHTML = arr.map(a => { const [t, k] = Array.isArray(a) ? a : [a, '']; return `<span class="chip ${k}">${t}</span>`; }).join(''); }
+
+/* ============ 01 TRIGLICÉRIDOS ============ */
+(function () {
+  const s = Scene('cvTG', 900, 430);
+  const GY = [125, 215, 305], GX = 250, OX = 296, ATT = [2, 3, 5], HX = 330, FX = 585;
+  const STEPS = [
+    {t: 'Materia prima', c: [['Glicerol-3-fosfato', 'gold'], 'Ácidos grasos libres'], x: 'El glicerol-3-fosfato procede de la dihidroxiacetona fosfato de la glucólisis (glicerol-3-fosfato deshidrogenasa). En el hígado también se forma por la glicerol cinasa. Los ácidos grasos, como el palmitato (C16:0), llegan libres.', n: 'El adipocito casi no tiene glicerol cinasa, así que depende de la glucosa para obtener glicerol-3-fosfato.', p: 'Glicerol-3-fosfato'},
+    {t: 'Activación de los ácidos grasos', c: [['Acil-CoA sintetasa', 'gold'], 'ATP → AMP + PPi'], x: 'Cada ácido graso se une a la coenzima A mediante un enlace tioéster de alta energía: ácido graso + CoA-SH + ATP → acil-CoA + AMP + PPi. Solo la forma activada puede transferirse al glicerol.', n: 'La hidrólisis del PPi por la pirofosfatasa hace la reacción irreversible.', p: 'Glicerol-3-P + 3 acil-CoA'},
+    {t: 'Primera esterificación (sn-1)', c: [['GPAT', 'gold'], 'Sale CoA-SH'], x: 'La glicerol-3-fosfato aciltransferasa transfiere el primer acilo al carbono sn-1. Se forma ácido lisofosfatídico y se libera la CoA.', n: 'La GPAT es el paso comprometido de la vía; la insulina la estimula.', p: 'Ácido lisofosfatídico'},
+    {t: 'Segunda esterificación (sn-2)', c: [['AGPAT', 'gold'], 'Ácido fosfatídico'], x: 'La acilglicerol-3-fosfato aciltransferasa agrega el segundo acilo en sn-2 y forma ácido fosfatídico.', n: 'El ácido fosfatídico es el punto de ramificación: también da origen a fosfolípidos (fosfatidilinositol, cardiolipina).', p: 'Ácido fosfatídico'},
+    {t: 'Retiro del fosfato', c: [['Fosfatasa de ácido fosfatídico (lipina)', 'gold'], 'Sale Pi'], x: 'La lipina hidroliza el fosfato del carbono sn-3 y deja 1,2-diacilglicerol (DAG), con un hidroxilo libre listo para el último acilo.', n: 'El DAG también es precursor de fosfatidilcolina y fosfatidiletanolamina.', p: '1,2-Diacilglicerol'},
+    {t: 'Tercera esterificación: triacilglicerol', c: [['DGAT', 'gold'], 'Triacilglicerol'], x: 'La diacilglicerol aciltransferasa (DGAT) esterifica sn-3 y completa el triacilglicerol. En el adipocito se almacena en la gota lipídica; en el hepatocito, la MTP lo carga sobre la ApoB-100 para exportarlo como VLDL.', n: 'En el enterocito predomina la vía del monoacilglicerol (MGAT → DGAT). El TAG se empaqueta con ApoB-48 en quilomicrones.', p: 'Triacilglicerol (TAG)'}
+  ];
+  let step = 0, prev = 0, tt = 1, auto = false, autoT = 0;
+  function st(k) {
+    const fa = [], coa = [];
+    for (let i = 0; i < 3; i++) {
+      const att = k >= ATT[i];
+      fa.push({x: att ? HX : FX, y: GY[i], coa: (k >= 1 && !att) ? 1 : 0, att: att ? 1 : 0});
+      coa.push(att ? {x: 820, y: 395 - i * 28, a: 1} : {x: FX - 62, y: GY[i], a: 0});
+    }
+    const P = k >= 4 ? {x: 470, y: 392, a: 1, att: 0} : {x: 338, y: GY[2], a: 1, att: 1};
+    return {fa, coa, P};
+  }
+  const L = (p, q, e) => { const o = {}; for (const k in p) o[k] = lerp(p[k], q[k], e); return o; };
+  function drawFA(c, x, y, t, i) {
+    c.lineCap = 'round'; c.lineJoin = 'round';
+    c.strokeStyle = COL.deep; c.lineWidth = 2.2;
+    c.beginPath(); c.moveTo(x - 3, y); c.lineTo(x - 3, y - 22); c.moveTo(x + 3, y); c.lineTo(x + 3, y - 22); c.stroke();
+    circ(c, x, y - 29, 8, COL.oxy); T(c, 'O', x, y - 29, {size: 10, color: '#fff', w: 700});
+    c.strokeStyle = '#C98B1E'; c.lineWidth = 4.5; c.beginPath(); c.moveTo(x, y);
+    for (let k = 0; k < 15; k++) c.lineTo(x + 14 * (k + 1), y + ((k % 2) ? -8 : 8) * (1 + .2 * Math.sin(t * 2.6 + k * .7 + i * 2)));
+    c.stroke();
+    circ(c, x, y, 6, COL.deep);
+    T(c, 'C16:0', x + 228, y, {size: 11, color: COL.muted, align: 'left'});
+  }
+  s.update = (d, dt) => {
+    tt = Math.min(1, tt + dt / (reduce ? .2 : 1.4));
+    if (auto) { autoT += dt; if (autoT > 3.4) { autoT = 0; if (step < 5) go(step + 1); else setAuto(false); } }
+  };
+  s.draw = (c, t) => {
+    const e = ease(tt), A = st(prev), B = st(step);
+    const S = {fa: A.fa.map((p, i) => L(p, B.fa[i], e)), coa: A.coa.map((p, i) => L(p, B.coa[i], e)), P: L(A.P, B.P, e)};
+    // fondo RE
+    rrect(c, 14, 14, 872, 402, 18); c.fillStyle = '#F8F5FC'; c.fill();
+    T(c, 'Retículo endoplásmico liso', 30, 34, {align: 'left', size: 12, color: COL.muted, w: 600});
+    // glicerol
+    c.strokeStyle = COL.deep; c.lineWidth = 3.5; c.beginPath(); c.moveTo(GX, GY[0]); c.lineTo(GX, GY[2]); c.stroke();
+    for (let i = 0; i < 3; i++) {
+      const y = GY[i], fa = S.fa[i];
+      c.strokeStyle = COL.deep; c.lineWidth = 3; c.beginPath(); c.moveTo(GX, y); c.lineTo(OX, y); c.stroke();
+      if (fa.att > .02) { c.globalAlpha = fa.att; c.beginPath(); c.moveTo(OX, y); c.lineTo(fa.x, y); c.stroke(); c.globalAlpha = 1; }
+      circ(c, OX, y, 10, COL.oxy); T(c, 'O', OX, y, {size: 11, color: '#fff', w: 700});
+      const hasP = i === 2 ? S.P.att : 0;
+      const free = clamp(1 - fa.att * 1.4 - hasP, 0, 1);
+      if (free > .02) { c.globalAlpha = free; T(c, 'H', OX + 22, y, {size: 15, color: COL.oxy, w: 700}); c.globalAlpha = 1; }
+      circ(c, GX, y, 14, COL.deep); T(c, 'C', GX, y, {size: 12, color: '#fff', w: 700});
+      T(c, 'sn-' + (i + 1), GX - 42, y, {size: 13, color: COL.green, w: 700});
+    }
+    // fosfato
+    if (S.P.att > .02) { c.globalAlpha = S.P.att; c.strokeStyle = COL.deep; c.lineWidth = 3; c.beginPath(); c.moveTo(OX, GY[2]); c.lineTo(S.P.x, S.P.y); c.stroke(); c.globalAlpha = 1; }
+    circ(c, S.P.x, S.P.y, 15, '#E58A2B'); T(c, 'P', S.P.x, S.P.y, {size: 14, color: '#fff', w: 700});
+    if (S.P.att < .98) { c.globalAlpha = 1 - S.P.att; T(c, 'Pi liberado', S.P.x, S.P.y + 26, {size: 12, color: COL.muted}); c.globalAlpha = 1; }
+    // ácidos grasos
+    for (let i = 0; i < 3; i++) {
+      const fa = S.fa[i];
+      drawFA(c, fa.x, fa.y, t, i);
+      const ho = clamp(1 - fa.coa - fa.att * 1.5, 0, 1);
+      if (ho > .02) { c.globalAlpha = ho; T(c, 'HO', fa.x - 22, fa.y, {size: 14, color: COL.oxy, w: 700}); c.globalAlpha = 1; }
+      if (fa.coa > .02) {
+        c.globalAlpha = fa.coa; rrect(c, fa.x - 84, fa.y - 13, 50, 26, 8); c.fillStyle = COL.apoA; c.fill();
+        T(c, 'CoA', fa.x - 59, fa.y, {size: 12, color: '#fff', w: 700});
+        c.strokeStyle = COL.deep; c.lineWidth = 2.5; c.beginPath(); c.moveTo(fa.x - 34, fa.y); c.lineTo(fa.x - 7, fa.y); c.stroke();
+        T(c, 'S', fa.x - 20, fa.y - 10, {size: 11, color: COL.gold, w: 700}); c.globalAlpha = 1;
+      }
+    }
+    // CoA liberadas
+    S.coa.forEach(q => { if (q.a > .02) { c.globalAlpha = q.a; rrect(c, q.x - 25, q.y - 12, 50, 24, 8); c.fillStyle = '#9CC3E6'; c.fill(); T(c, 'CoA-SH', q.x, q.y, {size: 11, color: COL.deep, w: 700}); c.globalAlpha = 1; } });
+    if (step === 1 || prev === 1) {
+      c.globalAlpha = step === 1 ? e : 1 - e;
+      for (let i = 0; i < 3; i++) T(c, 'ATP → AMP + PPi', FX + 120, GY[i] + 30, {size: 12, color: COL.green});
+      c.globalAlpha = 1;
+    }
+    // producto
+    rrect(c, 120, 360, 300, 40, 10); c.fillStyle = '#fff'; c.fill(); c.strokeStyle = COL.line; c.lineWidth = 1; c.stroke();
+    T(c, STEPS[step].p, 270, 380, {d: true, size: 15, color: COL.deep, w: 600});
+    if (step === 5) {
+      const g = .5 + .5 * Math.sin(t * 3);
+      c.globalAlpha = .25 + .2 * g; circ(c, 450, 215, 150 + 6 * g, null, COL.gold, 3); c.globalAlpha = 1;
+      T(c, '→ gota lipídica (adipocito) o VLDL (hígado)', 690, 392, {size: 12.5, color: COL.green});
+    }
+  };
+  function panel() {
+    const S = STEPS[step];
+    $('tgN').textContent = `Paso ${step} de 5`; $('tgT').textContent = S.t; chips($('tgC'), S.c); $('tgX').textContent = S.x; $('tgNote').textContent = S.n;
+  }
+  function go(k) { k = clamp(k, 0, 5); if (k === step) return; prev = step; step = k; tt = 0; panel(); }
+  function setAuto(v) { auto = v; autoT = 0; $('tgPlay').setAttribute('aria-pressed', v); $('tgPlay').textContent = v ? 'Detener' : 'Reproducir todo'; }
+  $('tgNext').onclick = () => go(step + 1);
+  $('tgPrev').onclick = () => go(step - 1);
+  $('tgReset').onclick = () => { setAuto(false); prev = 0; step = 0; tt = 1; panel(); };
+  $('tgPlay').onclick = () => { if (!auto && step === 5) { prev = 0; step = 0; tt = 1; panel(); } setAuto(!auto); };
+  panel();
+})();
+
+/* ============ 02 COLESTEROL ============ */
+(function () {
+  const s = Scene('cvCH', 900, 450);
+  const NODES = [
+    {n: 'Acetil-CoA', c: 'C2 ×2', N: 4},
+    {n: 'Acetoacetil-CoA', c: 'C4', N: 4},
+    {n: 'HMG-CoA', c: 'C6', N: 6},
+    {n: 'Mevalonato', c: 'C6', N: 6},
+    {n: 'IPP', c: 'C5', N: 5},
+    {n: 'Farnesil-PP', c: 'C15', N: 15},
+    {n: 'Escualeno', c: 'C30', N: 30},
+    {n: 'Lanosterol', c: 'C30', N: 30},
+    {n: 'Colesterol', c: 'C27', N: 27}
+  ];
+  const INFO = [
+    {t: 'Acetil-CoA: la materia prima', c: [['Citosol', ''], 'Desde citrato mitocondrial'], x: 'El acetil-CoA se forma en la mitocondria (β-oxidación, piruvato deshidrogenasa) y sale al citosol como citrato. Allí la ATP-citrato liasa lo regenera. Todos los carbonos del colesterol vienen de aquí.'},
+    {t: 'Condensación: acetoacetil-CoA', c: [['Tiolasa', 'gold'], 'C2 + C2 → C4'], x: 'Dos acetil-CoA se condensan y forman acetoacetil-CoA. Es la misma química de la cetogénesis, pero ocurre en el citosol.'},
+    {t: 'HMG-CoA', c: [['HMG-CoA sintasa', 'gold'], 'C4 + C2 → C6'], x: 'Un tercer acetil-CoA se une y forma β-hidroxi-β-metilglutaril-CoA (HMG-CoA). En la mitocondria hepática, la HMG-CoA va hacia cuerpos cetónicos; en el citosol, hacia colesterol.'},
+    {t: 'Mevalonato: el paso limitante', c: [['HMG-CoA reductasa', 'warn'], '2 NADPH', 'Membrana del RE'], x: 'La HMG-CoA reductasa reduce la HMG-CoA a mevalonato. Es el paso limitante y el principal sitio de control: la estimulan la insulina y SREBP-2; la inhiben el colesterol, el glucagón (vía AMPK) y las estatinas.'},
+    {t: 'Isopreno activado (IPP)', c: [['3 ATP', 'gold'], 'Sale CO₂', 'C6 → C5'], x: 'El mevalonato se fosforila con 3 ATP y se descarboxila. Resulta el isopentenil pirofosfato (IPP), la unidad isoprenoide de 5 carbonos, y su isómero dimetilalil-PP.'},
+    {t: 'Geranil-PP y farnesil-PP', c: [['Preniltransferasa', 'gold'], 'C5 → C10 → C15'], x: 'Las unidades C5 se condensan cabeza con cola: primero geranil-PP (C10) y luego farnesil-PP (C15). El farnesil-PP también sirve para prenilar proteínas y para sintetizar ubiquinona y dolicol.'},
+    {t: 'Escualeno', c: [['Escualeno sintasa', 'gold'], 'NADPH', 'C15 + C15 → C30'], x: 'Dos farnesil-PP se unen cola con cola y forman escualeno, un hidrocarburo lineal de 30 carbonos.'},
+    {t: 'Ciclación: lanosterol', c: [['Escualeno epoxidasa', 'gold'], ['Oxidoescualeno ciclasa', 'gold'], 'O₂ · NADPH'], x: 'El escualeno se epoxida y se cicla en una sola reacción concertada. Así aparece el núcleo esteroideo de cuatro anillos (A, B, C y D): el lanosterol.'},
+    {t: 'Colesterol (C27)', c: [['~19 reacciones', 'gold'], 'Pierde 3 metilos', 'C30 → C27'], x: 'En unas 19 reacciones de la membrana del RE, el lanosterol pierde 3 carbonos y reordena sus dobles enlaces hasta formar colesterol: núcleo esteroideo, 3-OH y una cadena lateral de 8 carbonos.'}
+  ];
+  // núcleo esteroideo
+  const SZ = 27, H3 = SZ * Math.sqrt(3);
+  const hex = (ox, oy) => [...Array(6)].map((_, k) => { const a = (-90 + 60 * k) * Math.PI / 180; return [ox + SZ * Math.cos(a), oy + SZ * Math.sin(a)]; });
+  const RA = hex(0, 0), RB = hex(H3, 0), RC = hex(1.5 * H3, -1.5 * SZ);
+  const p1 = RC[1], p2 = RC[2];
+  let dv = [p2[0] - p1[0], p2[1] - p1[1]]; const RD = [p1, p2]; let cur = p2;
+  const rot = (v, a) => [v[0] * Math.cos(a) - v[1] * Math.sin(a), v[0] * Math.sin(a) + v[1] * Math.cos(a)];
+  let ang = 72 * Math.PI / 180; if (rot(dv, ang)[0] < 0) ang = -ang;
+  for (let k = 0; k < 3; k++) { dv = rot(dv, ang); cur = [cur[0] + dv[0], cur[1] + dv[1]]; RD.push(cur); }
+  const uniq = [], key = []; // vértices únicos
+  const rings = [RA, RB, RC, RD].map(poly => poly.map(p => { let j = uniq.findIndex(q => Math.hypot(q[0] - p[0], q[1] - p[1]) < 2); if (j < 0) { uniq.push(p); j = uniq.length - 1; } return j; }));
+  const ringPos = uniq.map(p => [p[0], p[1]]);
+  // metilos y cadena lateral
+  ringPos.push([RA[1][0], RA[1][1] - SZ * .95]); // C19
+  ringPos.push([p1[0], p1[1] - SZ * .95]);      // C18
+  const c17 = RD[4]; const side = [];
+  for (let k = 0; k < 8; k++) side.push([c17[0] + 15 * (k + 1), c17[1] - 6 + ((k % 2) ? -9 : 9) - k * 2.5]);
+  ringPos.push(...side);
+  ringPos.push([RA[3][0] - 12, RA[3][1] + SZ * .85], [RA[3][0] + 12, RA[3][1] + SZ * .85], [p2[0], p2[1] + SZ * .95]); // metilos extra del lanosterol
+  // centrar
+  let mnx = 1e9, mxx = -1e9, mny = 1e9, mxy = -1e9; ringPos.forEach(p => { mnx = Math.min(mnx, p[0]); mxx = Math.max(mxx, p[0]); mny = Math.min(mny, p[1]); mxy = Math.max(mxy, p[1]); });
+  const ox = 450 - (mnx + mxx) / 2, oy = 300 - (mny + mxy) / 2; ringPos.forEach(p => { p[0] += ox; p[1] += oy; });
+  const OHpos = [RA[4][0] + ox - 26, RA[4][1] + oy + 8];
+  const ringBonds = [];
+  rings.forEach(r => r.forEach((a, i) => ringBonds.push([a, r[(i + 1) % r.length]])));
+  const iC19 = 17, iC18 = 18, iSide = 19;
+  ringBonds.push([rings[0][1], iC19], [rings[3][0], iC18], [rings[3][4], iSide]);
+  for (let k = 0; k < 7; k++) ringBonds.push([iSide + k, iSide + k + 1]);
+  const ringBondsL = ringBonds.concat([[rings[0][3], 27], [rings[0][3], 28], [rings[3][1], 29]]);
+  function chain(n, cy) { const out = []; for (let k = 0; k < n; k++) out.push([450 + (k - (n - 1) / 2) * 15, cy + ((k % 2) ? -8 : 8)]); return out; }
+  function layout(k) {
+    const N = NODES[k].N, pos = [];
+    const hid = k <= 6 ? [70, 300] : [830, 190];
+    let P;
+    if (k === 0) P = [[395, 300], [410, 292], [490, 300], [505, 292]];
+    else if (k === 2 || k === 3) { P = chain(5, 300); P.push([P[2][0], P[2][1] - 24]); }
+    else if (k >= 7) P = ringPos.slice(0, k === 7 ? 30 : 27);
+    else P = chain(N, 300);
+    for (let i = 0; i < 30; i++) pos.push(i < P.length ? {x: P[i][0], y: P[i][1], a: 1} : {x: hid[0], y: hid[1], a: 0});
+    if (k === 4) pos[5] = {x: 700, y: 200, a: 0};
+    return pos;
+  }
+  function bonds(k) {
+    if (k >= 7) return k === 7 ? ringBondsL : ringBonds;
+    if (k === 0) return [[0, 1], [2, 3]];
+    const N = NODES[k].N, b = [];
+    if (k === 2 || k === 3) { for (let i = 0; i < 4; i++) b.push([i, i + 1]); b.push([2, 5]); return b; }
+    for (let i = 0; i < N - 1; i++) b.push([i, i + 1]);
+    return b;
+  }
+  let step = 0, prev = 0, tt = 1, auto = false, autoT = 0;
+  const statin = $('chStatin');
+  const flux = [...Array(26)].map((_, i) => ({u: i / 26}));
+  const NX = i => 62 + i * 97, NY = 70;
+  s.update = (d, dt) => {
+    tt = Math.min(1, tt + dt / (reduce ? .2 : 1.5));
+    flux.forEach(f => { f.u += d * .09; if (f.u > 1) f.u -= 1; });
+    if (auto) { autoT += dt; if (autoT > 3.6) { autoT = 0; if (step < 8) go(step + 1); else setAuto(false); } }
+  };
+  s.draw = (c, t) => {
+    const e = ease(tt), A = layout(prev), B = layout(step);
+    // vía superior
+    c.strokeStyle = COL.line; c.lineWidth = 4; c.beginPath(); c.moveTo(NX(0), NY); c.lineTo(NX(8), NY); c.stroke();
+    const reach = NX(step); const blocked = statin.checked;
+    c.strokeStyle = COL.leaf; c.lineWidth = 4; c.beginPath(); c.moveTo(NX(0), NY); c.lineTo(blocked ? Math.min(reach, NX(2) + 40) : reach, NY); c.stroke();
+    // flujo
+    flux.forEach((f, i) => {
+      let x = NX(0) + f.u * (NX(8) - NX(0));
+      if (x > reach) return;
+      if (blocked && x > NX(2) + 36) { x = NX(2) + 36 - (i % 6) * 5; }
+      circ(c, x, NY + ((i % 3) - 1) * 3, 3.2, COL.gold);
+    });
+    NODES.forEach((n, i) => {
+      const on = i === step, done = i < step;
+      circ(c, NX(i), NY, on ? 15 : 11, on ? COL.green : done ? '#D6C8F2' : '#fff', on ? COL.green : COL.line, 2);
+      T(c, n.c, NX(i), NY, {size: on ? 10 : 9, color: on ? '#fff' : COL.deep, w: 700});
+      T(c, n.n, NX(i), NY + 30, {size: 12, color: on ? COL.deep : COL.muted, w: on ? 700 : 600});
+    });
+    // bloqueo estatina
+    if (blocked) {
+      const bx = NX(2) + 48, g = .6 + .4 * Math.sin(t * 5);
+      c.globalAlpha = g; c.strokeStyle = '#C0392B'; c.lineWidth = 4;
+      c.beginPath(); c.moveTo(bx - 9, NY - 9); c.lineTo(bx + 9, NY + 9); c.moveTo(bx + 9, NY - 9); c.lineTo(bx - 9, NY + 9); c.stroke(); c.globalAlpha = 1;
+      T(c, 'Estatina', bx, NY - 24, {size: 12, color: '#C0392B', w: 700});
+    }
+    // vista molecular
+    rrect(c, 20, 128, 860, 300, 16); c.fillStyle = '#FAF8FD'; c.fill();
+    T(c, 'Vista molecular · cada esfera es un carbono', 38, 148, {align: 'left', size: 12, color: COL.muted});
+    const P = A.map((p, i) => ({x: lerp(p.x, B[i].x, e), y: lerp(p.y, B[i].y, e), a: lerp(p.a, B[i].a, e)}));
+    const wob = i => Math.sin(t * 2 + i) * 1.2;
+    c.lineCap = 'round';
+    const drawB = (list, al) => { if (al < .02) return; c.globalAlpha = al; c.strokeStyle = '#3B2A6B'; c.lineWidth = 3; list.forEach(([a, b]) => { if (P[a].a < .3 || P[b].a < .3) return; c.beginPath(); c.moveTo(P[a].x, P[a].y + wob(a)); c.lineTo(P[b].x, P[b].y + wob(b)); c.stroke(); }); c.globalAlpha = 1; };
+    drawB(bonds(prev), 1 - e); drawB(bonds(step), e);
+    P.forEach((p, i) => { if (p.a < .02) return; c.globalAlpha = p.a; circ(c, p.x, p.y + wob(i), 7, step >= 7 ? COL.deep : '#2E6F5E', '#fff', 1.5); c.globalAlpha = 1; });
+    if (step >= 7) { c.globalAlpha = e; T(c, 'HO', OHpos[0], OHpos[1], {size: 15, color: COL.oxy, w: 700}); ['A', 'B', 'C'].forEach((r, i) => { const R = [RA, RB, RC][i]; const cx = R.reduce((s, p) => s + p[0], 0) / 6 + ox, cy = R.reduce((s, p) => s + p[1], 0) / 6 + oy; T(c, r, cx, cy, {size: 13, color: COL.green, w: 700, d: true}); }); const cx = RD.reduce((s, p) => s + p[0], 0) / 5 + ox, cy = RD.reduce((s, p) => s + p[1], 0) / 5 + oy; T(c, 'D', cx, cy, {size: 13, color: COL.green, w: 700, d: true}); c.globalAlpha = 1; }
+    if (step === 0) T(c, '2 × acetil-CoA', 450, 340, {size: 13, color: COL.muted});
+    if (step === 4) { c.globalAlpha = e; T(c, 'CO₂', 700, 200, {size: 14, color: COL.muted, w: 700}); c.globalAlpha = 1; }
+    if (step === 8) { c.globalAlpha = e; T(c, '3 C eliminados', 830, 210, {size: 13, color: COL.muted}); c.globalAlpha = 1; }
+    T(c, NODES[step].n + ' · ' + NODES[step].N + ' carbonos', 450, 405, {d: true, size: 16, color: COL.deep});
+  };
+  function panel() {
+    const S = INFO[step];
+    $('chN').textContent = `Paso ${step + 1} de 9`; $('chT').textContent = S.t; chips($('chC'), S.c); $('chX').textContent = S.x;
+    $('chStat').hidden = !statin.checked;
+  }
+  function go(k) { k = clamp(k, 0, 8); if (k === step) return; prev = step; step = k; tt = 0; panel(); }
+  function setAuto(v) { auto = v; autoT = 0; $('chPlay').setAttribute('aria-pressed', v); $('chPlay').textContent = v ? 'Detener' : 'Reproducir todo'; }
+  $('chNext').onclick = () => go(step + 1);
+  $('chPrev').onclick = () => go(step - 1);
+  $('chReset').onclick = () => { setAuto(false); prev = 0; step = 0; tt = 1; panel(); };
+  $('chPlay').onclick = () => { if (!auto && step === 8) { prev = 0; step = 0; tt = 1; panel(); } setAuto(!auto); };
+  statin.onchange = panel;
+  panel();
+})();
+
+/* ============ 03 ESTRUCTURA ============ */
+(function () {
+  const s = Scene('cvST', 620, 560);
+  const APO = {
+    B48: {n: 'ApoB-48', c: COL.apoB48, f: 'Estructural del quilomicrón. Es el 48 % N-terminal de la ApoB y no se une al receptor LDL.'},
+    B100: {n: 'ApoB-100', c: COL.apoB, f: 'Una sola copia por partícula. Estructural de VLDL, IDL, LDL y Lp(a); ligando del receptor LDL.'},
+    C2: {n: 'ApoC-II', c: COL.apoC, f: 'Cofactor que activa la lipoproteína lipasa (LPL).'},
+    C3: {n: 'ApoC-III', c: '#4E8C86', f: 'Inhibe la LPL y la captación hepática de remanentes.'},
+    E: {n: 'ApoE', c: COL.apoE, f: 'Ligando del receptor LDL y de LRP1: el hígado depura así los remanentes.'},
+    A1: {n: 'ApoA-I', c: COL.apoA, f: 'Estructural de la HDL. Acepta colesterol vía ABCA1 y activa la LCAT.'},
+    A2: {n: 'ApoA-II', c: '#6FA3D6', f: 'Segunda proteína más abundante de la HDL.'},
+    A4: {n: 'ApoA-IV', c: '#8DB7E0', f: 'Presente en quilomicrones nacientes; participa en la absorción intestinal de lípidos.'},
+    a: {n: 'Apo(a)', c: COL.apoa, f: 'Cadena de kringles unida a la ApoB-100 por un puente disulfuro. Es exclusiva de la Lp(a).'}
+  };
+  const TY = {
+    QM: {n: 'Quilomicrón', R: 205, d: '75–1200 nm', r: [75, 1200], den: '< 0,930', o: 'Intestino (enterocito)', f: 'Transporta los triglicéridos de la dieta desde el intestino hacia el músculo y el tejido adiposo. Es la partícula más grande y menos densa.', comp: [86, 3, 2, 7, 2], apos: [['B48', .2, 1.1], ['C2', 1.6, .35], ['C3', 2.2, .3], ['E', 2.8, .4], ['A1', 3.5, .5], ['A4', 4.3, .35], ['C2', 5.0, .3], ['E', 5.6, .35]]},
+    VLDL: {n: 'VLDL', R: 172, d: '30–80 nm', r: [30, 80], den: '0,930–1,006', o: 'Hígado', f: 'Exporta los triglicéridos sintetizados en el hígado hacia los tejidos periféricos. Inicia la vía centrífuga.', comp: [55, 12, 7, 18, 8], apos: [['B100', .3, 2.4], ['C2', 3.1, .4], ['C3', 3.8, .35], ['E', 4.6, .5], ['C2', 5.5, .3]]},
+    IDL: {n: 'IDL', R: 146, d: '25–35 nm', r: [25, 35], den: '1,006–1,019', o: 'Plasma (VLDL tras la LPL)', f: 'Remanente de VLDL. Una parte vuelve al hígado por la apoE; la otra se convierte en LDL por la lipasa hepática.', comp: [23, 29, 9, 19, 19], apos: [['B100', .3, 3.1], ['E', 3.9, .6]]},
+    LDL: {n: 'LDL', R: 124, d: '18–25 nm', r: [18, 25], den: '1,019–1,063', o: 'Plasma (IDL por lipasa hepática)', f: 'Principal transportadora de colesterol hacia los tejidos. La capta el receptor LDL mediante la ApoB-100. Su exceso causa aterosclerosis.', comp: [6, 42, 8, 22, 22], apos: [['B100', .2, 4.6]]},
+    HDL: {n: 'HDL', R: 88, d: '5–12 nm', r: [5, 12], den: '1,063–1,210', o: 'Hígado e intestino (apoA-I)', f: 'Transporte reverso del colesterol: lo recoge de la periferia y lo devuelve al hígado (vía centrípeta).', comp: [4, 15, 4, 25, 52], apos: [['A1', .2, 1.5], ['A1', 3.3, 1.5], ['A2', 2.0, .6], ['C3', 5.0, .35], ['E', 5.6, .35]]},
+    LPA: {n: 'Lipoproteína(a)', R: 118, d: '~25 nm', r: [22, 30], den: '1,055–1,085', o: 'Hígado', f: 'Partícula tipo LDL con apo(a) unida por un puente disulfuro. Es aterogénica, proinflamatoria y antifibrinolítica.', comp: [5, 40, 8, 21, 26], apos: [['B100', .35, 4.4]], tail: true}
+  };
+  const CN = ['Triglicéridos', 'Ésteres de colesterol', 'Colesterol libre', 'Fosfolípidos', 'Proteínas'];
+  const CC = [COL.tg, COL.ce, COL.fc, COL.pl, COL.apoB];
+  let ty = 'LDL', R = TY.LDL.R, Rfrom = R, rt = 1, core = [], hover = null, cx = 310, cxFrom = 310;
+  const show = {pl: $('lyPL'), fc: $('lyFC'), core: $('lyCore'), apo: $('lyApo')};
+  function genCore() {
+    const D = TY[ty], n = Math.round(lerp(26, 150, (D.R - 88) / 117)), tg = D.comp[0] / (D.comp[0] + D.comp[1]);
+    core = [...Array(n)].map(() => { const a = rnd(0, TAU), r = Math.sqrt(Math.random()) * .7; return {x: Math.cos(a) * r, y: Math.sin(a) * r, vx: 0, vy: 0, tg: Math.random() < tg, a: 0, s: rnd(.75, 1.15)}; });
+  }
+  s.update = (d, dt) => {
+    rt = Math.min(1, rt + dt / .8); const e = ease(rt); R = lerp(Rfrom, TY[ty].R, e); cx = lerp(cxFrom, TY[ty].tail ? 220 : 310, e);
+    core.forEach(p => { p.a = Math.min(1, p.a + dt * 1.5); p.vx += rnd(-1, 1) * d * .5; p.vy += rnd(-1, 1) * d * .5; p.vx *= .96; p.vy *= .96; p.x += p.vx * d; p.y += p.vy * d; const r = Math.hypot(p.x, p.y); if (r > .7) { p.x *= .7 / r; p.y *= .7 / r; p.vx *= -.5; p.vy *= -.5; } });
+  };
+  s.draw = (c, t) => {
+    const D = TY[ty], cy = 280, rotA = D.tail ? 0 : t * .12;
+    const g = c.createRadialGradient(cx, cy, R * .2, cx, cy, R * 1.25); g.addColorStop(0, 'rgba(242,181,63,.10)'); g.addColorStop(1, 'rgba(242,181,63,0)'); c.fillStyle = g; c.fillRect(0, 0, 620, 560);
+    // núcleo
+    if (show.core.checked) {
+      circ(c, cx, cy, R * .78, '#FFF6E2');
+      const dr = Math.max(3.2, R * .045);
+      core.forEach(p => { c.globalAlpha = p.a * (hover && hover !== 'core' ? .35 : 1); circ(c, cx + p.x * R, cy + p.y * R, dr * p.s, p.tg ? COL.tg : COL.ce); });
+      c.globalAlpha = 1;
+    }
+    // fosfolípidos
+    const n = Math.round(TAU * R / 15);
+    for (let i = 0; i < n; i++) {
+      const a = i / n * TAU + rotA, ca = Math.cos(a), sa = Math.sin(a);
+      if (show.pl.checked) {
+        c.globalAlpha = hover && hover !== 'pl' ? .35 : 1;
+        c.strokeStyle = COL.plTail; c.lineWidth = 1.6;
+        for (const off of [-.035, .035]) { const a2 = a + off * (120 / R); c.beginPath(); c.moveTo(cx + Math.cos(a2) * (R - 10), cy + Math.sin(a2) * (R - 10)); c.lineTo(cx + Math.cos(a2) * (R * .8), cy + Math.sin(a2) * (R * .8)); c.stroke(); }
+        circ(c, cx + ca * (R - 5), cy + sa * (R - 5), 5.2, COL.pl);
+      }
+      if (show.fc.checked && i % (D.comp[2] >= 8 ? 3 : 5) === 1) {
+        c.globalAlpha = hover && hover !== 'fc' ? .35 : 1;
+        const a2 = a + .5 / n * TAU; c.strokeStyle = COL.fc; c.lineWidth = 3.2; c.lineCap = 'round';
+        c.beginPath(); c.moveTo(cx + Math.cos(a2) * (R - 3), cy + Math.sin(a2) * (R - 3)); c.lineTo(cx + Math.cos(a2) * (R - 17), cy + Math.sin(a2) * (R - 17)); c.stroke();
+      }
+    }
+    c.globalAlpha = 1;
+    // apolipoproteínas
+    if (show.apo.checked) {
+      D.apos.forEach(([k, a0, span], idx) => {
+        const A = APO[k], on = hover === 'apo:' + k;
+        c.globalAlpha = hover && !on ? .35 : 1;
+        c.strokeStyle = A.c; c.lineWidth = on ? 13 : 9; c.lineCap = 'round';
+        if (on) { c.shadowColor = A.c; c.shadowBlur = 14; }
+        c.beginPath();
+        const steps = Math.max(8, Math.round(span * 30));
+        for (let j = 0; j <= steps; j++) { const a = a0 + rotA + span * j / steps, rr = R + 4 + 2.6 * Math.sin(j * 1.1 + t * 3 + idx); const x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr; j ? c.lineTo(x, y) : c.moveTo(x, y); }
+        c.stroke(); c.shadowBlur = 0;
+        const am = a0 + rotA + span / 2, lr = R + 36;
+        const lx = clamp(cx + Math.cos(am) * lr, 40, 580), ly = clamp(cy + Math.sin(am) * lr, 14, 525);
+        c.font = `700 12px ${FB}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineWidth = 4; c.strokeStyle = '#fff'; c.lineJoin = 'round'; c.strokeText(A.n, lx, ly);
+        T(c, A.n, lx, ly, {size: 12, color: A.c, w: 700});
+      });
+      c.globalAlpha = 1;
+      if (D.tail) {
+        const on = hover === 'apo:a'; c.globalAlpha = hover && !on ? .35 : 1;
+        const ax = cx + R + 6, ay = cy;
+        T(c, 'S–S', ax + 10, ay + 18, {size: 11, color: COL.apoa, w: 700});
+        let px = ax, py = ay;
+        for (let j = 0; j < 13; j++) {
+          const x = ax + 18 + j * 21, y = ay - 6 + Math.sin(j * .7 - t * 2.2) * 20 - j * 6;
+          c.strokeStyle = COL.apoa; c.lineWidth = 3; c.beginPath(); c.moveTo(px, py); c.lineTo(x, y); c.stroke();
+          if (j === 12) { rrect(c, x - 11, y - 11, 22, 22, 4); c.fillStyle = '#9AA5A1'; c.fill(); }
+          else { circ(c, x, y, 9, '#fff', j < 4 || j > 9 ? COL.apoa : '#E07B6F', 3); circ(c, x, y, 3.5, null, j < 4 || j > 9 ? COL.apoa : '#E07B6F', 1.6); }
+          px = x; py = y;
+        }
+        T(c, 'Apo(a) · kringles', ax + 150, ay - 110, {size: 12.5, color: COL.apoa, w: 700});
+        c.globalAlpha = 1;
+      }
+    }
+    T(c, D.n + ' · corte transversal (no a escala)', 20, 540, {align: 'left', size: 12, color: COL.muted});
+  };
+  s.cv.addEventListener('pointermove', e => {
+    const p = ptr(s, e), D = TY[ty], cy = 280, r = Math.hypot(p.x - cx, p.y - cy);
+    let a = Math.atan2(p.y - cy, p.x - cx) - (D.tail ? 0 : s.t * .12); a = ((a % TAU) + TAU) % TAU;
+    let h = null, html = '';
+    if (D.tail && p.x > cx + R + 4 && p.y < cy + 30 && p.y > cy - 200) { h = 'apo:a'; }
+    else if (r > R - 2 && r < R + 22 && show.apo.checked) {
+      for (const [k, a0, span] of D.apos) { let rel = ((a - a0) % TAU + TAU) % TAU; if (rel <= span) { h = 'apo:' + k; break; } }
+      if (!h && show.pl.checked) h = 'pl';
+    } else if (r > R * .78 && r <= R + 2) h = (show.fc.checked && Math.random() < 0) ? 'fc' : 'pl';
+    else if (r <= R * .78) h = 'core';
+    hover = h;
+    if (h && h.startsWith('apo:')) { const A = APO[h.slice(4)]; html = `<b>${A.n}</b><br>${A.f}`; }
+    else if (h === 'pl') html = '<b>Monocapa de fosfolípidos</b><br>Cabezas polares hacia el plasma y colas hacia el núcleo. Entre ellas se intercala colesterol libre (bastones marrones).';
+    else if (h === 'core') html = '<b>Núcleo hidrofóbico</b><br><span style="color:#F2B53F">●</span> triglicéridos y <span style="color:#E8955A">●</span> ésteres de colesterol. Son los lípidos que se transportan.';
+    if (html) showTip(html, e); else hideTip();
+  });
+  s.cv.addEventListener('pointerleave', () => { hover = null; hideTip(); });
+  Object.values(show).forEach(i => i.onchange = () => {});
+  // panel
+  const tabs = $('stTabs');
+  tabs.innerHTML = Object.entries(TY).map(([k, v]) => `<button class="btn" role="tab" data-k="${k}" aria-pressed="${k === ty}">${k === 'LPA' ? 'Lp(a)' : k === 'QM' ? 'Quilomicrón' : v.n}</button>`).join('');
+  tabs.onclick = e => { const b = e.target.closest('button'); if (!b) return; select(b.dataset.k); };
+  // eje de tamaños
+  const lo = Math.log10(4), hi = Math.log10(1300), X = v => (Math.log10(v) - lo) / (hi - lo) * 100;
+  $('sizeRows').innerHTML = Object.entries(TY).map(([k, v]) => `<div class="srow" data-k="${k}"><span>${k === 'LPA' ? 'Lp(a)' : k}</span><div class="track"><i style="left:${X(v.r[0])}%;width:${Math.max(1.5, X(v.r[1]) - X(v.r[0]))}%"></i></div></div>`).join('');
+  $('sizeAxis').innerHTML = [5, 10, 25, 50, 100, 250, 500, 1000].map(v => `<span style="left:${X(v)}%">${v}</span>`).join('');
+  function select(k) {
+    ty = k; Rfrom = R; cxFrom = cx; rt = 0; genCore();
+    const D = TY[k];
+    tabs.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === k));
+    document.querySelectorAll('#sizeRows .srow').forEach(r => r.classList.toggle('on', r.dataset.k === k));
+    $('stName').textContent = D.n; $('stFn').textContent = D.f; $('stD').textContent = D.d; $('stDen').textContent = D.den; $('stO').textContent = D.o;
+    $('stBar').innerHTML = D.comp.map((v, i) => `<i style="width:${v}%;background:${CC[i]}" title="${CN[i]} ${v}%"></i>`).join('');
+    $('stLeg').innerHTML = D.comp.map((v, i) => `<span><s style="background:${CC[i]}"></s>${CN[i]} ${v} %</span>`).join('');
+    const ks = [...new Set(D.apos.map(a => a[0]).concat(D.tail ? ['a'] : []))];
+    $('stApos').innerHTML = ks.map(a => `<span class="chip apo-chip" data-a="${a}" style="border-color:${APO[a].c};color:${APO[a].c};background:#fff">${APO[a].n}</span>`).join('');
+  }
+  $('stApos').addEventListener('pointerover', e => { const ch = e.target.closest('.apo-chip'); if (!ch) return; hover = 'apo:' + ch.dataset.a; const A = APO[ch.dataset.a]; showTip(`<b>${A.n}</b><br>${A.f}`, e); });
+  $('stApos').addEventListener('pointerout', () => { hover = null; hideTip(); });
+  genCore(); core.forEach(p => p.a = 1); select('LDL'); rt = 1;
+})();
+
+/* ============ 04 METABOLISMO ============ */
+(function () {
+  const s = Scene('cvMT', 1000, 600);
+  const STG = {
+    'QM naciente': {r: 17, f: '#F6CD62', ring: COL.apoB48, g: 'QM', d: 'Sale del enterocito por la linfa (conducto torácico) con ApoB-48. Así evita pasar primero por el hígado.'},
+    'QM maduro': {r: 17, f: '#F6CD62', ring: COL.apoC, g: 'QM', d: 'Ya en la sangre recibe apoC-II y apoE de la HDL. La apoC-II activa la lipoproteína lipasa.'},
+    'Remanente de QM': {r: 9, f: '#E7A548', ring: COL.apoE, g: 'QM', d: 'La LPL hidrolizó la mayoría de sus triglicéridos. El hígado lo capta por la apoE (receptor LDL y LRP1).'},
+    'VLDL': {r: 12, f: '#F2A541', ring: COL.apoB, g: 'VLDL', d: 'Vía centrífuga: el hígado exporta triglicéridos endógenos con ApoB-100, apoC-II y apoE.'},
+    'IDL': {r: 9, f: '#E07F33', ring: COL.apoB, g: 'IDL', d: 'La LPL retiró triglicéridos de la VLDL. Parte vuelve al hígado por la apoE; el resto lo procesa la lipasa hepática.'},
+    'LDL': {r: 6.5, f: '#B4532A', ring: COL.apoB, g: 'LDL', d: 'La lipasa hepática convirtió la IDL en LDL, rica en ésteres de colesterol y con solo ApoB-100. Entrega colesterol por el receptor LDL; si sobra, se retiene en la pared arterial.'},
+    'HDL naciente': {r: 7, f: '#CFE2F4', ring: COL.apoA, g: 'HDL', disc: true, d: 'HDL discoidal (pre-β) con apoA-I, secretada por hígado e intestino. Es pobre en lípidos.'},
+    'HDL3': {r: 5.5, f: '#8DBDE8', ring: COL.apoA, g: 'HDL', d: 'Recibió colesterol de la célula vía ABCA1. La LCAT lo esterificó y la partícula se volvió esférica.'},
+    'HDL2': {r: 7.5, f: '#5E9FD8', ring: COL.apoA, g: 'HDL', d: 'HDL grande. La CETP intercambia ésteres de colesterol por triglicéridos con las partículas con ApoB. El hígado capta sus ésteres vía SR-BI (vía centrípeta).'}
+  };
+  const W = (x, y, st, ev) => ({x, y, st, ev});
+  const PATH = {
+    exo: [W(130, 500, 'QM naciente'), W(70, 400), W(85, 270), W(210, 215, 'QM maduro', 'apo'), W(380, 330), W(560, 432, 'Remanente de QM', 'lpl'), W(480, 320), W(400, 170, null, 'up')],
+    endoA: [W(470, 175, 'VLDL'), W(600, 260), W(680, 432, 'IDL', 'lpl'), W(600, 330), W(480, 180, null, 'up')],
+    endoB: [W(470, 175, 'VLDL'), W(600, 260), W(680, 432, 'IDL', 'lpl'), W(720, 330), W(615, 250, 'LDL', 'hl'), W(520, 200), W(440, 170, null, 'up')],
+    endoC: [W(470, 175, 'VLDL'), W(600, 260), W(680, 432, 'IDL', 'lpl'), W(720, 330), W(615, 250, 'LDL', 'hl'), W(760, 270), W(862, 255, null, 'up')],
+    endoD: [W(470, 175, 'VLDL'), W(600, 260), W(680, 432, 'IDL', 'lpl'), W(720, 330), W(615, 250, 'LDL', 'hl'), W(770, 380), W(880, 510, null, 'wall')],
+    hdl: [W(500, 120, 'HDL naciente'), W(660, 95), W(840, 205, 'HDL3', 'eff'), W(770, 175), W(700, 215, 'HDL2', 'cetp'), W(610, 95), W(470, 85, null, 'srb')]
+  };
+  function build(wps) {
+    const pts = [], idx = [0];
+    for (let i = 0; i < wps.length - 1; i++) {
+      const a = wps[Math.max(0, i - 1)], b = wps[i], c2 = wps[i + 1], d = wps[Math.min(wps.length - 1, i + 2)];
+      for (let j = 0; j < 20; j++) { const t = j / 20, t2 = t * t, t3 = t2 * t; const f = (p0, p1, p2, p3) => .5 * (2 * p1 + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 + (-p0 + 3 * p1 - 3 * p2 + p3) * t3); pts.push([f(a.x, b.x, c2.x, d.x), f(a.y, b.y, c2.y, d.y)]); }
+      idx.push(pts.length);
+    }
+    const lastW = wps[wps.length - 1]; pts.push([lastW.x, lastW.y]);
+    const Ls = [0]; for (let i = 1; i < pts.length; i++) Ls.push(Ls[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+    return {wps, pts, L: Ls, total: Ls[Ls.length - 1], ws: idx.map(i => Ls[Math.min(i, pts.length - 1)])};
+  }
+  const P = {}; for (const k in PATH) P[k] = build(PATH[k]);
+  function at(p, sv) { let lo = 0, hi = p.L.length - 1; while (hi - lo > 1) { const m = (lo + hi) >> 1; if (p.L[m] < sv) lo = m; else hi = m; } const f = (sv - p.L[lo]) / ((p.L[hi] - p.L[lo]) || 1); return [lerp(p.pts[lo][0], p.pts[hi][0], clamp(f, 0, 1)), lerp(p.pts[lo][1], p.pts[hi][1], clamp(f, 0, 1))]; }
+  let parts = [], fx = [], wall = [], follow = null, uid = 0;
+  const tm = {exo: 1, endo: .3, hdl: .6};
+  const en = {exo: $('mtExo'), endo: $('mtEndo'), rev: $('mtRev'), hyper: $('mtHyper')};
+  function spawn(kind) {
+    let key = kind;
+    if (kind === 'endo') { const h = en.hyper.checked, r = Math.random(); key = h ? (r < .25 ? 'endoA' : r < .5 ? 'endoB' : r < .62 ? 'endoC' : 'endoD') : (r < .35 ? 'endoA' : r < .78 ? 'endoB' : r < .97 ? 'endoC' : 'endoD'); }
+    const path = P[key], st = path.wps[0].st;
+    parts.push({id: ++uid, kind, path, s: 0, wi: 0, stage: st, r: STG[st].r, a: 0, dying: 0, x: path.pts[0][0], y: path.pts[0][1], v: rnd(.85, 1.15)});
+  }
+  function emit(x, y, tx, ty, col, n, spread = 14) { for (let i = 0; i < n; i++) fx.push({x0: x + rnd(-6, 6), y0: y + rnd(-6, 6), x1: tx + rnd(-spread, spread), y1: ty + rnd(-spread, spread), c: col, life: 0, max: rnd(.9, 1.4), r: rnd(2.2, 3.4)}); }
+  function event(p, ev) {
+    if (ev === 'lpl') { emit(p.x, p.y, p.x + rnd(-30, 30), 525, COL.tg, 6); flash.lpl = 1; }
+    if (ev === 'hl') { emit(p.x, p.y, 520, 175, COL.tg, 3, 10); }
+    if (ev === 'apo') { emit(330, 150, p.x, p.y, COL.apoC, 3, 4); }
+    if (ev === 'eff') { emit(880, 250, p.x, p.y, COL.fc, 6, 5); flash.abca = 1; }
+    if (ev === 'cetp') {
+      let best = null, bd = 280; parts.forEach(q => { if (q.kind === 'endo' && !q.dying) { const d = Math.hypot(q.x - p.x, q.y - p.y); if (d < bd) { bd = d; best = q; } } });
+      if (best) { emit(p.x, p.y, best.x, best.y, COL.ce, 3, 3); emit(best.x, best.y, p.x, p.y, COL.tg, 3, 3); fx.push({link: true, a: p, b: best, life: 0, max: 1.1}); }
+      flash.cetp = 1;
+    }
+  }
+  const flash = {lpl: 0, abca: 0, cetp: 0};
+  let tick = 0;
+  s.update = (d, dt) => {
+    tick += d;
+    if (en.exo.checked) { tm.exo -= d; if (tm.exo < 0) { spawn('exo'); tm.exo = 2.6; } }
+    if (en.endo.checked) { tm.endo -= d; if (tm.endo < 0) { spawn('endo'); tm.endo = en.hyper.checked ? .75 : 1.5; } }
+    if (en.rev.checked) { tm.hdl -= d; if (tm.hdl < 0) { spawn('hdl'); tm.hdl = 2.2; } }
+    for (const k in flash) flash[k] = Math.max(0, flash[k] - d * 1.6);
+    parts.forEach(p => {
+      p.a = Math.min(1, p.a + d * 2);
+      if (p.dying) { p.dying += d; return; }
+      p.s += 62 * d * p.v;
+      const ws = p.path.ws;
+      while (p.wi + 1 < ws.length && p.s >= ws[p.wi + 1]) { p.wi++; const w = p.path.wps[p.wi]; if (w.st) p.stage = w.st; if (w.ev) event(p, w.ev); }
+      const [x, y] = at(p.path, Math.min(p.s, p.path.total)); p.x = x; p.y = y;
+      p.r = lerp(p.r, STG[p.stage].r, Math.min(1, d * 2.5));
+      if (p.s >= p.path.total) {
+        const last = p.path.wps[p.path.wps.length - 1].ev;
+        if (last === 'wall') { if (wall.length > 40) wall.shift(); wall.push({x: rnd(830, 965), y: rnd(492, 560), ox: 0}); p.dying = 1.5; }
+        else { if (last === 'srb') emit(p.x, p.y, 420, 95, COL.ce, 3, 12); p.dying = .001; }
+      }
+    });
+    wall.forEach(w => w.ox = Math.min(1, w.ox + d * .08));
+    parts = parts.filter(p => !(p.dying && p.dying > .7));
+    if (follow && !parts.includes(follow)) { follow = null; panelDefault(); }
+    fx.forEach(f => f.life += d); fx = fx.filter(f => f.life < f.max);
+    if (follow) panelFollow();
+    if ((tick += 0) && Math.floor(s.t * 3) !== cnt.last) { cnt.last = Math.floor(s.t * 3); counts(); }
+  };
+  const cnt = {last: -1};
+  function counts() { const c = {QM: 0, VLDL: 0, IDL: 0, LDL: 0, HDL: 0}; parts.forEach(p => { if (!p.dying) c[STG[p.stage].g]++; }); $('cQM').textContent = c.QM; $('cVL').textContent = c.VLDL; $('cID').textContent = c.IDL; $('cLD').textContent = c.LDL; $('cHD').textContent = c.HDL; }
+  function organ(c, x, y, rx, ry, fill, stroke) { c.beginPath(); c.ellipse(x, y, rx, ry, 0, 0, TAU); c.fillStyle = fill; c.fill(); c.strokeStyle = stroke; c.lineWidth = 2; c.stroke(); }
+  function pathLine(c, p, col) { c.strokeStyle = col; c.lineWidth = 2; c.setLineDash([5, 7]); c.globalAlpha = .45; c.beginPath(); p.pts.forEach((q, i) => i ? c.lineTo(q[0], q[1]) : c.moveTo(q[0], q[1])); c.stroke(); c.setLineDash([]); c.globalAlpha = 1; }
+  s.draw = (c, t) => {
+    // fondo sangre
+    rrect(c, 8, 8, 984, 584, 18); c.fillStyle = '#FDF7F6'; c.fill();
+    T(c, 'Plasma', 26, 26, {align: 'left', size: 12, color: '#B98A84'});
+    // hígado
+    c.beginPath(); c.moveTo(330, 110); c.bezierCurveTo(330, 40, 560, 30, 600, 75); c.bezierCurveTo(630, 110, 560, 175, 470, 185); c.bezierCurveTo(380, 192, 330, 160, 330, 110); c.fillStyle = '#F3D6CF'; c.fill(); c.strokeStyle = '#A8473D'; c.lineWidth = 2.5; c.stroke();
+    T(c, 'Hígado', 455, 118, {d: true, size: 17, color: '#8A3A32'});
+    T(c, 'receptor LDL · LRP1 · SR-BI', 455, 140, {size: 11.5, color: '#8A3A32'});
+    // intestino
+    c.strokeStyle = '#D9A24A'; c.lineWidth = 16; c.lineCap = 'round'; c.beginPath(); c.moveTo(40, 540); for (let i = 0; i <= 8; i++) c.lineTo(40 + i * 25, 520 + Math.sin(i * 1.4) * 14); c.stroke();
+    c.strokeStyle = '#F7DDA6'; c.lineWidth = 8; c.stroke();
+    T(c, 'Intestino', 120, 570, {d: true, size: 14, color: '#8A5A10'});
+    T(c, 'linfa', 50, 335, {size: 11.5, color: COL.green});
+    // tejido adiposo y LPL
+    rrect(c, 470, 448, 330, 128, 14); c.fillStyle = '#FFF7E3'; c.fill(); c.strokeStyle = '#EBCB86'; c.lineWidth = 1.5; c.stroke();
+    for (let i = 0; i < 9; i++) circ(c, 500 + i * 36, 505 + (i % 2) * 22, 17, '#FCE7B3', '#E7C17A', 1.2);
+    T(c, 'Tejido adiposo · músculo', 635, 562, {d: true, size: 13, color: '#8A5A10'});
+    c.strokeStyle = '#D98C7C'; c.lineWidth = 3; c.beginPath(); c.moveTo(470, 440); c.lineTo(800, 440); c.stroke();
+    for (let x = 500; x < 800; x += 60) { rrect(c, x - 16, 433, 32, 14, 6); c.fillStyle = flash.lpl > 0 ? `rgba(23,138,78,${.4 + .6 * flash.lpl})` : '#5D9C7E'; c.fill(); T(c, 'LPL', x, 440, {size: 9.5, color: '#fff', w: 700}); }
+    // lipasa hepática
+    rrect(c, 586, 238, 70, 22, 8); c.fillStyle = '#A8473D'; c.fill(); T(c, 'Lipasa hep.', 621, 249, {size: 10.5, color: '#fff', w: 700});
+    // célula periférica
+    organ(c, 905, 245, 78, 72, '#EAF3F0', '#7FA99A'); circ(c, 925, 255, 20, '#CFE3DC', '#7FA99A', 1.5);
+    T(c, 'Célula periférica', 905, 330, {d: true, size: 12.5, color: COL.deep});
+    for (let i = 0; i < 4; i++) { const a = Math.PI * (.85 + i * .12); const x = 905 + Math.cos(a) * 78, y = 245 + Math.sin(a) * 72; rrect(c, x - 8, y - 6, 16, 12, 4); c.fillStyle = flash.abca > 0 ? COL.leaf : '#3E8B73'; c.fill(); }
+    T(c, 'ABCA1', 830, 180, {size: 10.5, color: '#3E8B73', w: 700});
+    // pared arterial
+    rrect(c, 820, 475, 160, 100, 12); c.fillStyle = '#F9E3DF'; c.fill(); c.strokeStyle = '#D79A92'; c.lineWidth = 1.5; c.stroke();
+    T(c, 'Íntima arterial', 900, 490, {d: true, size: 12, color: '#8E2F28'});
+    wall.forEach(w => circ(c, w.x, w.y, 4.5, `rgb(${Math.round(lerp(180, 110, w.ox))},${Math.round(lerp(83, 60, w.ox))},${Math.round(lerp(42, 30, w.ox))})`));
+    // CETP
+    circ(c, 700, 215, 16, flash.cetp > 0 ? 'rgba(123,90,174,.35)' : 'rgba(123,90,174,.12)', COL.apoE, 1.5); T(c, 'CETP', 700, 215, {size: 10, color: COL.apoE, w: 700});
+    T(c, 'LCAT', 790, 160, {size: 10.5, color: COL.apoA, w: 700});
+    // rutas
+    if (en.exo.checked) pathLine(c, P.exo, '#D9A24A');
+    if (en.endo.checked) { pathLine(c, P.endoB, '#B4532A'); pathLine(c, P.endoC, '#B4532A'); }
+    if (en.rev.checked) pathLine(c, P.hdl, COL.apoA);
+    T(c, 'CENTRÍFUGA  hígado → periferia', 760, 395, {size: 11.5, color: '#B4532A', w: 700});
+    T(c, 'CENTRÍPETA  periferia → hígado', 650, 58, {size: 11.5, color: COL.apoA, w: 700});
+    T(c, 'EXÓGENA  dieta → tejidos', 205, 190, {size: 11.5, color: '#B07D1E', w: 700});
+    // efectos
+    fx.forEach(f => {
+      if (f.link) { const a = 1 - f.life / f.max; c.globalAlpha = a; c.strokeStyle = COL.apoE; c.setLineDash([3, 4]); c.lineWidth = 1.5; c.beginPath(); c.moveTo(f.a.x, f.a.y); c.lineTo(f.b.x, f.b.y); c.stroke(); c.setLineDash([]); c.globalAlpha = 1; return; }
+      const u = ease(f.life / f.max); c.globalAlpha = 1 - Math.pow(f.life / f.max, 3); circ(c, lerp(f.x0, f.x1, u), lerp(f.y0, f.y1, u), f.r, f.c); c.globalAlpha = 1;
+    });
+    // partículas
+    parts.forEach(p => {
+      const S = STG[p.stage], al = p.a * (p.dying ? Math.max(0, 1 - p.dying / .7) : 1); if (al <= 0) return;
+      c.globalAlpha = al;
+      if (S.disc) { c.beginPath(); c.ellipse(p.x, p.y, p.r * 1.6, p.r * .6, Math.sin(t + p.id) * .4, 0, TAU); c.fillStyle = S.f; c.fill(); c.strokeStyle = S.ring; c.lineWidth = 2.5; c.stroke(); }
+      else { circ(c, p.x, p.y, p.r, S.f, S.ring, p.r > 8 ? 3 : 2); if (p.r > 8) circ(c, p.x - p.r * .3, p.y - p.r * .3, p.r * .25, 'rgba(255,255,255,.5)'); }
+      if (p === follow) { c.strokeStyle = COL.deep; c.setLineDash([3, 3]); c.lineWidth = 1.6; circ(c, p.x, p.y, p.r + 8 + Math.sin(t * 6) * 1.5, null, COL.deep, 1.6); c.setLineDash([]); T(c, p.stage, p.x, p.y - p.r - 18, {size: 12.5, color: COL.deep, w: 700}); }
+      c.globalAlpha = 1;
+    });
+  };
+  function panelDefault() { $('mtT').textContent = 'Toca una partícula'; $('mtX').textContent = 'Sigue su recorrido: verás cuándo pierde triglicéridos por la lipoproteína lipasa (LPL), cuándo la lipasa hepática la convierte en LDL o cuándo la HDL recoge colesterol de la periferia.'; }
+  let lastStage = '';
+  function panelFollow() { if (follow.stage === lastStage) return; lastStage = follow.stage; const S = STG[follow.stage]; $('mtT').textContent = follow.stage; $('mtX').textContent = S.d; }
+  s.cv.addEventListener('click', e => {
+    const q = ptr(s, e); let best = null, bd = 1e9;
+    parts.forEach(p => { const d = Math.hypot(p.x - q.x, p.y - q.y) - p.r; if (d < bd && !p.dying) { bd = d; best = p; } });
+    if (best && bd < 16) { follow = best; lastStage = ''; panelFollow(); } else { follow = null; panelDefault(); }
+  });
+  const pb = $('mtPlay');
+  pb.onclick = () => { s.playing = !s.playing; pb.setAttribute('aria-pressed', s.playing); pb.textContent = s.playing ? 'Pausar' : 'Reanudar'; };
+  $('mtSpeed').oninput = e => s.speed = +e.target.value;
+  if (reduce) { s.playing = false; pb.setAttribute('aria-pressed', false); pb.textContent = 'Reanudar'; }
+  // estado inicial poblado
+  for (let i = 0; i < 260; i++) s.update(1 / 30, 1 / 30);
+  s.t = 0;
+})();
+
+/* ============ 05 PLACA ============ */
+(function () {
+  const s = Scene('cvPL', 1000, 520);
+  const E0 = 196, IEL = 402;
+  const yE = (x, b) => E0 - b * 118 * Math.exp(-Math.pow((x - 505) / 175, 2));
+  const yOf = (x, f, b) => { if (f <= 1) { const top = yE(x, b) + 16; return top + f * (IEL - top); } return IEL + (f - 1) * 200; };
+  const LDLP = [[420, .3, 0], [452, .58, 0], [480, .25, 1], [505, .72, 1], [530, .4, 1], [560, .62, 2], [590, .3, 2], [615, .52, 2], [470, .84, -1], [585, .85, -1]];
+  const MACP = [[455, .45], [515, .55], [585, .42]];
+  const SMCP = [[430, .12], [485, .08], [540, .1], [595, .14]];
+  const BUL = [0, 0, 0, 0, 0, .14, .42, .84, .84];
+  const DUR = [3, 4, 6, 5, 7, 6, 7, 5, 6];
+  const STEPS = [
+    {t: 'Arteria sana', x: 'El endotelio íntegro produce óxido nítrico (NO), que vasodilata, impide la adhesión de leucocitos y plaquetas y mantiene la barrera. La íntima es delgada y la media tiene células musculares lisas (CML).', c: ['Óxido nítrico', 'Lámina elástica interna'], k: 'El objetivo de la prevención es mantener este estado: no fumar, controlar la presión arterial, la glucemia y la LDL desde edades tempranas.'},
+    {t: 'Disfunción endotelial', x: 'La LDL elevada, la hipertensión, el tabaquismo, la diabetes y el flujo turbulento en las bifurcaciones lesionan el endotelio: baja el NO, aumenta la permeabilidad y se expresan moléculas de adhesión.', c: [['VCAM-1', 'warn'], ['ICAM-1', 'warn'], 'Selectinas', '↓ NO'], k: 'Las placas aparecen sobre todo en bifurcaciones y curvaturas, donde el flujo es turbulento (bifurcación carotídea, descendente anterior proximal).'},
+    {t: 'Ingreso y retención de LDL', x: 'Las partículas con ApoB pequeñas (< 70 nm) atraviesan el endotelio. En la íntima, la ApoB-100 se une a los proteoglicanos de la matriz (sitios con carga positiva) y la partícula queda atrapada. Este es el evento iniciador.', c: [['Proteoglicanos', 'gold'], 'ApoB-100', 'Hipótesis de respuesta a la retención'], k: 'A mayor número de partículas (ApoB) y mayor tiempo de exposición, más retención. Por eso importa la exposición acumulada a la LDL a lo largo de la vida.'},
+    {t: 'Oxidación de la LDL', x: 'Retenida, la LDL se modifica: radicales libres, mieloperoxidasa y lipooxigenasas oxidan sus fosfolípidos y su ApoB. La LDL oxidada (oxLDL) actúa como un patrón de daño (DAMP) y activa la inflamación.', c: [['LDL oxidada', 'warn'], 'Especies reactivas de oxígeno', 'Fosfolípidos oxidados'], k: 'La oxLDL estimula la expresión de MCP-1 y de moléculas de adhesión, y amplifica el reclutamiento de leucocitos.'},
+    {t: 'Reclutamiento de monocitos', x: 'Atraídos por MCP-1, los monocitos ruedan sobre el endotelio (selectinas), se adhieren con firmeza (VCAM-1) y migran a la íntima (diapédesis). Allí se diferencian en macrófagos por acción del M-CSF. También ingresan linfocitos T.', c: [['MCP-1 / CCR2', 'warn'], 'VCAM-1', 'M-CSF', 'Diapédesis'], k: 'La inflamación es un motor de la aterosclerosis. La PCR ultrasensible elevada (> 2 mg/L) es un modificador del riesgo en las guías ESC/EAS 2025.'},
+    {t: 'Células espumosas: la estría grasa', x: 'Los macrófagos captan oxLDL por receptores scavenger (CD36, SR-A, LOX-1). Esta captación no tiene retroalimentación negativa, así que se llenan de gotas de colesterol esterificado y se vuelven células espumosas. Su acúmulo forma la estría grasa, la primera lesión visible.', c: [['CD36', 'gold'], ['SR-A', 'gold'], 'LOX-1', 'Estría grasa'], k: 'Las estrías grasas ya se observan en la aorta de niños y adolescentes. La lesión es reversible en esta etapa.'},
+    {t: 'Núcleo necrótico y migración de CML', x: 'Las células espumosas mueren por apoptosis. La eferocitosis falla, se liberan lípidos y cristales de colesterol y se forma un núcleo necrótico. Los factores de crecimiento (PDGF) hacen migrar CML desde la media hacia la íntima.', c: [['Apoptosis', 'warn'], 'Cristales de colesterol', 'PDGF', 'Eferocitosis defectuosa'], k: 'Los cristales de colesterol activan el inflamasoma NLRP3 (IL-1β), un blanco terapéutico estudiado en ensayos como CANTOS.'},
+    {t: 'Cápsula fibrosa: el fibroateroma', x: 'Las CML producen colágeno y elastina y forman una cápsula fibrosa sobre el núcleo lipídico. La placa crece hacia la luz, reduce el flujo y puede causar isquemia de esfuerzo.', c: [['Colágeno', 'gold'], 'Remodelado', 'Estenosis'], k: 'Una estenosis mayor del 70 % limita el flujo con el esfuerzo: angina estable o claudicación intermitente.'},
+    {t: 'Ruptura y trombosis', x: 'Las metaloproteinasas (MMP) de los macrófagos adelgazan la cápsula. Si se rompe, el núcleo trombogénico (factor tisular) queda expuesto a la sangre: las plaquetas se adhieren y agregan, se forma fibrina y el trombo puede ocluir la luz.', c: [['MMP', 'warn'], ['Factor tisular', 'warn'], 'Plaquetas', 'Fibrina'], k: 'Así se producen el síndrome coronario agudo y el ACV aterotrombótico. Las placas vulnerables (cápsula delgada < 65 µm, núcleo grande) a menudo no son las más estenóticas.'}
+  ];
+  function base(k) {
+    const st = {gap: +(k >= 1), vcam: +(k >= 1), pg: +(k >= 2), bulge: BUL[k], core: k >= 6 ? 1 : 0, cap: k >= 7 ? 1 : 0, thin: k >= 8 ? 1 : 0, thr: k >= 8 ? 1 : 0, ldl: [], mac: [], smc: [], ros: 0};
+    if (k >= 2) LDLP.forEach(p => { if (!(k >= 5 && p[2] >= 0)) st.ldl.push({x: p[0], f: p[1], ox: k >= 3 ? 1 : 0, a: 1, ly: null}); });
+    if (k >= 4) MACP.forEach(p => st.mac.push({x: p[0], f: p[1], ly: null, size: 1, m: 1, lip: k >= 5 ? 1 : 0, a: k >= 6 ? .25 : 1}));
+    if (k >= 6) SMCP.forEach(p => st.smc.push({x: p[0], f: p[1]}));
+    return st;
+  }
+  function cur(k, Tt) {
+    if (k === 0) return base(0);
+    const A = base(k - 1), B = base(k), S = JSON.parse(JSON.stringify(A)), p = clamp(Tt / DUR[k], 0, 1), e = ease(p);
+    for (const key of ['gap', 'vcam', 'pg', 'bulge', 'core', 'cap', 'thin', 'thr']) S[key] = lerp(A[key], B[key], e);
+    if (k === 2) S.ldl = LDLP.map((q, i) => { const u = clamp((p - i * .05) / .55, 0, 1); if (u < .5) { const v = ease(u / .5), x = lerp(q[0] - 170, q[0], v); return {x, f: 0, ly: lerp(40 + (i % 4) * 34, yE(q[0], S.bulge) - 6, v), ox: 0, a: u > 0 ? 1 : 0}; } return {x: q[0], f: lerp(0, q[1], ease((u - .5) / .5)), ly: null, ox: 0, a: 1}; });
+    if (k === 3) { S.ldl.forEach((l, i) => l.ox = ease(clamp(p * 1.6 - i * .06, 0, 1))); S.ros = p < 1 ? 1 : 0; }
+    if (k === 4) S.mac = MACP.map((q, i) => {
+      const u = clamp((p - i * .1) / .78, 0, 1);
+      if (u < .45) { const x = lerp(140 + i * 70, q[0], ease(u / .45)); return {x, ly: yE(x, 0) - 13, f: 0, size: .75, m: 0, lip: 0, a: 1}; }
+      if (u < .58) return {x: q[0], ly: yE(q[0], 0) - 13, f: 0, size: .75, m: 0, lip: 0, a: 1};
+      if (u < .84) { const v = ease((u - .58) / .26); return v < .3 ? {x: q[0], ly: lerp(yE(q[0], 0) - 13, yE(q[0], 0) + 8, v / .3), f: 0, size: .7, m: 0, lip: 0, a: 1} : {x: q[0], ly: null, f: lerp(0, q[1], (v - .3) / .7), size: .72, m: 0, lip: 0, a: 1}; }
+      const v = ease((u - .84) / .16); return {x: q[0], ly: null, f: q[1], size: lerp(.75, 1, v), m: v, lip: 0, a: 1};
+    });
+    if (k === 5) {
+      const eaten = [0, 0, 0];
+      S.ldl = LDLP.map((q, i) => { if (q[2] < 0) return {x: q[0], f: q[1], ox: 1, a: 1, ly: null}; const u = clamp((p - i * .05) / .5, 0, 1); const m = MACP[q[2]]; if (u >= .95) eaten[q[2]]++; return {x: lerp(q[0], m[0], ease(u)), f: lerp(q[1], m[1], ease(u)), ox: 1, a: 1 - clamp((u - .85) / .15, 0, 1), ly: null}; });
+      S.mac.forEach((m, i) => m.lip = Math.min(1, eaten[i] / 3 + (p > .95 ? 1 : 0)));
+    }
+    if (k === 6) { S.mac.forEach((m, i) => m.a = lerp(1, .25, ease(clamp(p * 1.4 - i * .1, 0, 1)))); S.smc = SMCP.map((q, i) => ({x: q[0] + (1 - ease(clamp((p - i * .08) / .7, 0, 1))) * 25, f: lerp(1.35, q[1], ease(clamp((p - i * .08) / .7, 0, 1)))})); }
+    return S;
+  }
+  let step = 0, Tt = 0, auto = false;
+  const rbc = [...Array(16)].map(() => ({x: rnd(0, 1000), f: Math.random(), v: rnd(70, 120), r: rnd(0, TAU)}));
+  const ldlL = [...Array(14)].map(() => ({x: rnd(0, 1000), f: Math.random(), v: rnd(60, 110)}));
+  const plt = [...Array(70)].map(() => { const a = rnd(0, TAU), r = Math.sqrt(Math.random()); return {u: Math.cos(a) * r, v: Math.abs(Math.sin(a)) * r}; });
+  const crys = [...Array(14)].map(() => ({u: rnd(-.7, .7), v: rnd(-.6, .6), a: rnd(0, Math.PI)}));
+  const pgs = [...Array(9)].map((_, i) => ({x: 395 + i * 28, f: rnd(.3, .8)}));
+  let S = base(0);
+  s.update = (d, dt) => {
+    Tt += reduce ? dt * 4 : dt;
+    S = cur(step, Tt);
+    const flow = S.thr > .5 ? .45 : 1;
+    rbc.forEach(r => { r.x += r.v * d * flow; r.r += d; if (r.x > 1020) { r.x = -20; r.f = Math.random(); } });
+    ldlL.forEach(r => { r.x += r.v * d * flow; if (r.x > 1020) { r.x = -20; r.f = Math.random(); } });
+    if (auto && Tt > DUR[step] + 1.6) { if (step < 8) go(step + 1); else setAuto(false); }
+  };
+  function lumY(x, f, b) { return 14 + f * (yE(x, b) - 30); }
+  function ldlDot(c, x, y, ox) {
+    const r = Math.round(lerp(242, 120, ox)), g = Math.round(lerp(181, 75, ox)), b = Math.round(lerp(63, 40, ox));
+    circ(c, x, y, 6.5, `rgb(${r},${g},${b})`, COL.apoB, 1.8);
+  }
+  s.draw = (c, t) => {
+    const b = S.bulge;
+    // luz
+    const lg = c.createLinearGradient(0, 0, 0, 220); lg.addColorStop(0, '#FBE9E8'); lg.addColorStop(1, '#F6D5D3'); c.fillStyle = lg; c.fillRect(0, 0, 1000, 260);
+    T(c, 'Luz arterial', 22, 24, {align: 'left', size: 12, color: '#9B5550', w: 700});
+    ldlL.forEach(r => { const y = lumY(r.x, r.f, b); if (y > yE(r.x, b) - 10) return; ldlDot(c, r.x, y, 0); });
+    rbc.forEach(r => { const y = lumY(r.x, r.f, b); if (y > yE(r.x, b) - 12) return; c.save(); c.translate(r.x, y); c.rotate(Math.sin(r.r) * .5); c.beginPath(); c.ellipse(0, 0, 11, 6, 0, 0, TAU); c.fillStyle = '#D9534F'; c.fill(); c.beginPath(); c.ellipse(0, 0, 5, 2.4, 0, 0, TAU); c.fillStyle = '#C0403C'; c.fill(); c.restore(); });
+    if (step === 0) for (let i = 0; i < 6; i++) { const x = 120 + i * 150 + Math.sin(t + i) * 10, y = yE(x, b) - 22 - ((t * 20 + i * 13) % 40); c.globalAlpha = .7; circ(c, x, y, 9, '#EEE8F8', COL.green, 1); T(c, 'NO', x, y, {size: 9, color: COL.green, w: 700}); c.globalAlpha = 1; }
+    // íntima
+    c.beginPath(); c.moveTo(0, yE(0, b) + 16); for (let x = 0; x <= 1000; x += 10) c.lineTo(x, yE(x, b) + 16); c.lineTo(1000, IEL); c.lineTo(0, IEL); c.closePath(); c.fillStyle = '#FBF1DD'; c.fill();
+    T(c, 'Íntima', 22, IEL - 18, {align: 'left', size: 12, color: '#8A5A10', w: 700});
+    // proteoglicanos
+    if (S.pg > .02) { c.globalAlpha = S.pg * .8; c.strokeStyle = '#6BAF8E'; c.lineWidth = 1.6; pgs.forEach((q, i) => { const y = yOf(q.x, q.f, b); c.beginPath(); for (let j = 0; j < 8; j++) { const x = q.x - 18 + j * 5, yy = y + Math.sin(j * 1.4 + i + t) * 4; j ? c.lineTo(x, yy) : c.moveTo(x, yy); } c.stroke(); }); c.globalAlpha = 1; }
+    // núcleo necrótico
+    if (S.core > .02) {
+      const cxx = 505, cyy = yOf(505, .62, b), rx = 108 * S.core, ry = (IEL - yE(505, b) - 16) * .3 * S.core + 4;
+      const g = c.createRadialGradient(cxx, cyy, 4, cxx, cyy, rx); g.addColorStop(0, '#C9A15A'); g.addColorStop(1, '#E9CF94'); c.beginPath(); c.ellipse(cxx, cyy, rx, ry, 0, 0, TAU); c.fillStyle = g; c.fill();
+      c.strokeStyle = 'rgba(255,255,255,.9)'; c.lineWidth = 1.6; crys.forEach(q => { const x = cxx + q.u * rx, y = cyy + q.v * ry; c.beginPath(); c.moveTo(x - Math.cos(q.a) * 7, y - Math.sin(q.a) * 7); c.lineTo(x + Math.cos(q.a) * 7, y + Math.sin(q.a) * 7); c.stroke(); });
+      if (S.core > .6) T(c, 'Núcleo necrótico', cxx, cyy + ry * .55, {size: 12, color: '#6E4A12', w: 700});
+    }
+    // LDL retenida
+    S.ldl.forEach(l => { if (l.a <= .01) return; c.globalAlpha = l.a; const y = l.ly != null ? l.ly : yOf(l.x, l.f, b); ldlDot(c, l.x, y, l.ox); c.globalAlpha = 1; });
+    if (S.ros) S.ldl.forEach((l, i) => { const fl = Math.max(0, Math.sin(t * 9 + i * 1.7)); if (fl < .5) return; const y = yOf(l.x, l.f, b); c.globalAlpha = fl; c.strokeStyle = '#E8B021'; c.lineWidth = 2; for (let k = 0; k < 4; k++) { const a = k * Math.PI / 4; c.beginPath(); c.moveTo(l.x + 9 * Math.cos(a), y + 9 * Math.sin(a)); c.lineTo(l.x + 14 * Math.cos(a), y + 14 * Math.sin(a)); c.moveTo(l.x - 9 * Math.cos(a), y - 9 * Math.sin(a)); c.lineTo(l.x - 14 * Math.cos(a), y - 14 * Math.sin(a)); c.stroke(); } c.globalAlpha = 1; });
+    // macrófagos / monocitos
+    S.mac.forEach((m, i) => {
+      if (m.a <= .01) return; c.globalAlpha = m.a;
+      const y = m.ly != null ? m.ly : yOf(m.x, m.f, b), R = 13 * m.size + 6 * m.m;
+      c.beginPath(); for (let j = 0; j <= 40; j++) { const a = j / 40 * TAU, rr = R * (1 + .14 * m.m * Math.sin(5 * a + t * 2 + i)); j ? c.lineTo(m.x + Math.cos(a) * rr, y + Math.sin(a) * rr) : c.moveTo(m.x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+      c.closePath(); c.fillStyle = m.m < .5 ? '#BFD6F2' : '#BFE4D7'; c.fill(); c.strokeStyle = m.m < .5 ? '#4A7FBF' : '#3E8B73'; c.lineWidth = 2; c.stroke();
+      c.beginPath(); c.ellipse(m.x - 2, y + 1, R * .38, R * .26, .3, 0, TAU); c.fillStyle = m.m < .5 ? '#4A7FBF' : '#3E8B73'; c.fill();
+      const nl = Math.round(9 * m.lip); for (let j = 0; j < nl; j++) { const a = j * 2.4 + i, rr = R * .62; circ(c, m.x + Math.cos(a) * rr * (.5 + (j % 3) * .2), y + Math.sin(a) * rr * (.5 + (j % 3) * .2), 3.4, COL.tg); }
+      c.globalAlpha = 1;
+    });
+    // CML en la íntima
+    S.smc.forEach((q, i) => { const y = yOf(q.x, q.f, b); c.save(); c.translate(q.x, y); c.rotate(-.15 + i * .08); c.beginPath(); c.ellipse(0, 0, 22, 6.5, 0, 0, TAU); c.fillStyle = '#E8AFA6'; c.fill(); c.strokeStyle = '#C47A70'; c.lineWidth = 1.4; c.stroke(); c.beginPath(); c.ellipse(0, 0, 6, 2.6, 0, 0, TAU); c.fillStyle = '#A85A50'; c.fill(); c.restore(); });
+    // cápsula fibrosa
+    if (S.cap > .02) {
+      const th = 20 * S.cap * (1 - .6 * S.thin);
+      c.beginPath(); for (let x = 395; x <= 615; x += 5) c.lineTo(x, yE(x, b) + 16); for (let x = 615; x >= 395; x -= 5) c.lineTo(x, yE(x, b) + 16 + th * Math.sin(Math.PI * (x - 395) / 220)); c.closePath(); c.fillStyle = 'rgba(232,186,170,.85)'; c.fill();
+      c.strokeStyle = '#C46E5F'; c.lineWidth = 1.2; for (let k = 1; k < 4; k++) { c.beginPath(); for (let x = 400; x <= 610; x += 6) { const y = yE(x, b) + 16 + th * k / 4 * Math.sin(Math.PI * (x - 395) / 220) + Math.sin(x * .2 + k) * 1.2; x === 400 ? c.moveTo(x, y) : c.lineTo(x, y); } c.stroke(); }
+      if (S.cap > .8 && S.thin < .5) T(c, 'Cápsula fibrosa', 505, yE(505, b) + 46, {size: 12, color: '#8E2F28', w: 700});
+    }
+    // endotelio
+    for (let i = 0; i < 20; i++) {
+      const xc = i * 50 + 25, gp = 1.5 + S.gap * 6 * Math.exp(-Math.pow((xc - 505) / 210, 2)), x0 = i * 50 + gp, x1 = (i + 1) * 50 - gp;
+      if (S.thin > .3 && xc === 525) continue;
+      c.beginPath(); for (let k = 0; k <= 6; k++) { const x = lerp(x0, x1, k / 6); c.lineTo(x, yE(x, b)); } for (let k = 6; k >= 0; k--) { const x = lerp(x0, x1, k / 6); c.lineTo(x, yE(x, b) + 15); } c.closePath();
+      c.fillStyle = '#EAA9A3'; c.fill(); c.strokeStyle = '#C9706B'; c.lineWidth = 1.2; c.stroke();
+      c.beginPath(); c.ellipse(xc, yE(xc, b) + 7.5, 8, 3.2, 0, 0, TAU); c.fillStyle = '#B5524B'; c.fill();
+    }
+    T(c, 'Endotelio', 22, yE(0, b) + 8, {align: 'left', size: 11, color: '#fff', w: 700});
+    if (S.vcam > .02) { c.globalAlpha = S.vcam; c.strokeStyle = COL.apoE; c.lineWidth = 2; for (let x = 360; x <= 650; x += 36) { const y = yE(x, b); c.beginPath(); c.moveTo(x, y); c.lineTo(x, y - 8); c.moveTo(x, y - 8); c.lineTo(x - 4, y - 13); c.moveTo(x, y - 8); c.lineTo(x + 4, y - 13); c.stroke(); } T(c, 'VCAM-1', 680, yE(680, b) - 14, {size: 11, color: COL.apoE, w: 700}); c.globalAlpha = 1; }
+    // trombo
+    if (S.thr > .02) {
+      const top = yE(505, b), hgt = 92 * S.thr, wd = 85 * S.thr;
+      c.strokeStyle = 'rgba(200,170,90,.8)'; c.lineWidth = 1; for (let k = 0; k < 14; k++) { c.beginPath(); c.moveTo(505 - wd + (k * 13) % (2 * wd), top); c.lineTo(505 - wd + ((k * 29) % (2 * wd)), top - hgt * (.4 + (k % 5) * .12)); c.stroke(); }
+      plt.forEach((q, i) => { const x = 505 + q.u * wd, y = top + 4 - q.v * hgt; if (y > yE(x, b)) return; circ(c, x, y, 3.2, i % 6 === 0 ? '#D9534F' : '#9B7BC4'); });
+      T(c, 'Trombo', 505, top - hgt - 12, {size: 13, color: '#6A4C93', w: 700});
+      c.strokeStyle = '#5A1F1A'; c.lineWidth = 2.4; c.beginPath(); c.moveTo(520, top + 2); c.lineTo(514, top + 12); c.lineTo(524, top + 22); c.lineTo(516, top + 34); c.stroke();
+    }
+    // LEI y media
+    c.fillStyle = '#F6E3E0'; c.fillRect(0, IEL, 1000, 120);
+    c.strokeStyle = '#D4A63A'; c.lineWidth = 3; c.beginPath(); for (let x = 0; x <= 1000; x += 6) { const y = IEL + Math.sin(x * .12) * 2.5; x ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke();
+    for (let r = 0; r < 3; r++) for (let x = (r % 2) * 30; x < 1000; x += 62) { c.save(); c.translate(x + 20, IEL + 28 + r * 30); c.rotate(-.08); c.beginPath(); c.ellipse(0, 0, 25, 7, 0, 0, TAU); c.fillStyle = '#EDBEB6'; c.fill(); c.strokeStyle = '#D19387'; c.lineWidth = 1; c.stroke(); c.beginPath(); c.ellipse(0, 0, 7, 2.5, 0, 0, TAU); c.fillStyle = '#B9675C'; c.fill(); c.restore(); }
+    T(c, 'Lámina elástica interna', 980, IEL - 12, {align: 'right', size: 11, color: '#A47A1E', w: 700});
+    T(c, 'Media · músculo liso', 980, 506, {align: 'right', size: 11.5, color: '#9B5550', w: 700});
+    // estenosis
+    const sten = Math.round(b * 52 + S.thr * 38);
+    rrect(c, 800, 14, 186, 46, 10); c.fillStyle = 'rgba(255,255,255,.9)'; c.fill();
+    T(c, 'Estenosis luminal', 812, 28, {align: 'left', size: 11.5, color: COL.muted});
+    T(c, sten + ' %', 970, 28, {align: 'right', size: 14, color: sten > 70 ? '#B8433B' : COL.deep, w: 700, d: true});
+    rrect(c, 812, 42, 162, 8, 4); c.fillStyle = '#EEE'; c.fill(); rrect(c, 812, 42, Math.max(8, 162 * sten / 100), 8, 4); c.fillStyle = sten > 70 ? '#B8433B' : sten > 40 ? COL.gold : COL.leaf; c.fill();
+  };
+  const dots = $('plDots');
+  dots.innerHTML = STEPS.map((_, i) => `<button class="dot" data-i="${i}" aria-label="Paso ${i}">${i}</button>`).join('');
+  dots.onclick = e => { const b = e.target.closest('button'); if (b) { setAuto(false); go(+b.dataset.i); } };
+  function panel() {
+    const D = STEPS[step];
+    $('plN').textContent = step === 0 ? 'Punto de partida' : `Paso ${step} de 8`; $('plT').textContent = D.t; $('plX').textContent = D.x; chips($('plC'), D.c); $('plK').textContent = D.k;
+    dots.querySelectorAll('.dot').forEach((d, i) => { d.classList.toggle('on', i === step); d.classList.toggle('done', i < step); });
+  }
+  function go(k) { step = clamp(k, 0, 8); Tt = 0; panel(); }
+  function setAuto(v) { auto = v; $('plPlay').setAttribute('aria-pressed', v); $('plPlay').textContent = v ? 'Detener' : 'Secuencia completa'; }
+  $('plNext').onclick = () => { setAuto(false); go(step + 1); };
+  $('plPrev').onclick = () => { setAuto(false); go(step - 1); };
+  $('plPlay').onclick = () => { if (auto) setAuto(false); else { go(step === 8 ? 0 : step); setAuto(true); } };
+  panel();
+})();
+
+/* ============ 06A APOB: número de partículas ============ */
+(function () {
+  const s = Scene('cvAB', 720, 380);
+  let ldlc = 120, dnm = 26, parts = [];
+  const apo = () => .75 * ldlc * Math.pow(24 / dnm, 2);
+  function sync() {
+    const n = Math.round(apo() / 5.5);
+    while (parts.length < n) parts.push({x: rnd(40, 680), y: rnd(70, 350), vx: rnd(-30, 30), vy: rnd(-30, 30), a: 0, out: false, ph: rnd(0, TAU)});
+    let live = parts.filter(p => !p.out).length;
+    for (let i = parts.length - 1; i >= 0 && live > n; i--) if (!parts[i].out) { parts[i].out = true; live--; }
+    const A = Math.round(apo());
+    $('abCv').textContent = ldlc; $('abDv').textContent = dnm; $('abLDL').textContent = ldlc; $('abApo').textContent = A;
+    const f = $('abFlag');
+    if (A >= 100 && ldlc < 130) { f.className = 'flag bad'; f.textContent = 'Discordancia: el LDL-C parece aceptable, pero hay exceso de partículas (ApoB alta). El riesgo sigue a la ApoB.'; }
+    else if (A < 90 && ldlc >= 130) { f.className = 'flag ok'; f.textContent = 'LDL-C alto, pero en pocas partículas grandes y ricas en colesterol: el número de partículas es menor de lo que sugiere el LDL-C.'; }
+    else if (A >= 100) { f.className = 'flag bad'; f.textContent = 'Concordancia: LDL-C y ApoB elevados. Hay muchas partículas aterogénicas.'; }
+    else { f.className = 'flag ok'; f.textContent = 'Concordancia: LDL-C y ApoB en rango moderado.'; }
+  }
+  s.update = (d) => {
+    parts.forEach(p => { p.a = p.out ? p.a - d * 2 : Math.min(1, p.a + d * 2); p.x += p.vx * d; p.y += p.vy * d; p.ph += d * 2; const R = dnm * .95; if (p.x < 24 + R || p.x > 696 - R) p.vx *= -1; if (p.y < 62 + R || p.y > 362 - R) p.vy *= -1; p.x = clamp(p.x, 24 + R, 696 - R); p.y = clamp(p.y, 62 + R, 362 - R); });
+    parts = parts.filter(p => !(p.out && p.a <= 0));
+  };
+  s.draw = (c, t) => {
+    rrect(c, 12, 50, 696, 320, 16); c.fillStyle = '#FFF9EE'; c.fill(); c.strokeStyle = '#EED9AE'; c.lineWidth = 1.5; c.stroke();
+    T(c, '1 dL de plasma (representación)', 24, 30, {align: 'left', size: 13, color: COL.muted});
+    const n = parts.filter(p => !p.out).length;
+    T(c, `${n} partículas · cada una con 1 ApoB-100`, 696, 30, {align: 'right', size: 13, color: COL.apoB, w: 700});
+    const R = dnm * .95;
+    parts.forEach(p => {
+      c.globalAlpha = clamp(p.a, 0, 1);
+      const g = c.createRadialGradient(p.x - R * .3, p.y - R * .3, 2, p.x, p.y, R); g.addColorStop(0, '#F7C96A'); g.addColorStop(1, '#D9772B'); circ(c, p.x, p.y, R, g, COL.pl, 2.5);
+      c.strokeStyle = COL.apoB; c.lineWidth = 4; c.lineCap = 'round'; c.beginPath(); c.arc(p.x, p.y, R + 2, p.ph, p.ph + 4.4); c.stroke();
+      c.globalAlpha = 1;
+    });
+  };
+  const C = $('abC'), D = $('abD');
+  C.oninput = () => { ldlc = +C.value; sync(); };
+  D.oninput = () => { dnm = +D.value; sync(); };
+  $('abA').onclick = () => { C.value = ldlc = 120; D.value = dnm = 26; sync(); };
+  $('abB').onclick = () => { C.value = ldlc = 120; D.value = dnm = 19.5; sync(); };
+  sync(); parts.forEach(p => p.a = 1);
+})();
+
+/* ============ 06B Receptor LDL y PCSK9 ============ */
+(function () {
+  const s = Scene('cvRC', 900, 400);
+  const MY = 232, SLOTS = [...Array(11)].map((_, i) => 100 + i * 70);
+  const ENDO = [470, 318], LYSO = [760, 330], ER = [190, 335];
+  let rec = [], ldl = [], pc = [], fx = [], hist = [], tProd = 0, tSyn = 0, tPc = 0, tH = 0;
+  const opt = {p: $('rcP'), ab: $('rcAb'), st: $('rcSt')};
+  function freeSlot() { const used = new Set(rec.filter(r => r.slot != null).map(r => r.slot)); const free = SLOTS.map((_, i) => i).filter(i => !used.has(i)); return free.length ? free[Math.floor(Math.random() * free.length)] : null; }
+  function reset() {
+    rec = []; ldl = []; pc = []; fx = []; hist = [];
+    for (let i = 0; i < 8; i++) { const sl = freeSlot(); rec.push({slot: sl, st: 'surf', x: SLOTS[sl], y: MY, T: 0, ldl: null, tag: null}); }
+    for (let i = 0; i < 22; i++) ldl.push({x: rnd(30, 870), y: rnd(30, 200), vx: rnd(-20, 20), vy: rnd(-20, 20), b: null});
+  }
+  const mv = (o, tx, ty, d, sp) => { const dx = tx - o.x, dy = ty - o.y, L = Math.hypot(dx, dy); if (L < sp * d) { o.x = tx; o.y = ty; return true; } o.x += dx / L * sp * d; o.y += dy / L * sp * d; return false; };
+  s.update = (d) => {
+    tProd += d; tSyn += d; tPc += d; tH += d;
+    if (tProd > .75) { tProd = 0; if (ldl.length < 90) ldl.push({x: rnd(30, 870), y: 8, vx: rnd(-15, 15), vy: rnd(10, 25), b: null}); }
+    const synEvery = opt.st.checked ? 1.0 : 2.6;
+    if (tSyn > synEvery) { tSyn = 0; const sl = freeSlot(); if (sl != null && rec.length < 16) rec.push({slot: sl, st: 'syn', x: ER[0], y: ER[1], T: 0, ldl: null, tag: null}); }
+    if (opt.p.checked && tPc > 1.6) { tPc = 0; if (pc.length < 14) { const x = rnd(120, 820); pc.push({x, y: MY + 30, vx: rnd(-20, 20), vy: -40, on: null, rise: 1}); } }
+    ldl.forEach(l => { if (l.b) return; l.vx += rnd(-1, 1) * 40 * d; l.vy += rnd(-1, 1) * 40 * d; l.vx = clamp(l.vx, -30, 30); l.vy = clamp(l.vy, -30, 30); l.x += l.vx * d; l.y += l.vy * d; if (l.x < 20 || l.x > 880) l.vx *= -1; if (l.y < 14) l.vy = Math.abs(l.vy); if (l.y > MY - 30) l.vy = -Math.abs(l.vy); l.x = clamp(l.x, 20, 880); l.y = clamp(l.y, 14, MY - 30); });
+    pc.forEach(p => { if (p.on) return; if (p.rise) { p.y -= 50 * d; if (p.y < MY - 40) p.rise = 0; return; } p.vx += rnd(-1, 1) * 60 * d; p.vy += rnd(-1, 1) * 60 * d; p.vx = clamp(p.vx, -35, 35); p.vy = clamp(p.vy, -35, 35); p.x += p.vx * d; p.y += p.vy * d; if (p.x < 20 || p.x > 880) p.vx *= -1; if (p.y < 14 || p.y > MY - 22) p.vy *= -1; p.x = clamp(p.x, 20, 880); p.y = clamp(p.y, 14, MY - 22); });
+    rec.forEach(r => {
+      r.T += d;
+      if (r.st === 'syn') { if (mv(r, SLOTS[r.slot], MY, d, 110)) { r.st = 'surf'; r.T = 0; } }
+      else if (r.st === 'surf') {
+        if (!r.ldl) { for (const l of ldl) if (!l.b && Math.hypot(l.x - r.x, l.y - (MY - 34)) < 24) { l.b = r; r.ldl = l; r.T = 0; break; } }
+        if (!r.tag && opt.p.checked && !opt.ab.checked) { for (const p of pc) if (!p.on && !p.rise && Math.hypot(p.x - r.x, p.y - (MY - 30)) < 26) { p.on = r; r.tag = p; break; } }
+        if (r.ldl) { r.ldl.x = r.x; r.ldl.y = MY - 32; }
+        if ((r.ldl && r.T > .8) || (r.tag && r.T > 2.2)) { r.st = 'in'; r.slot = null; r.T = 0; }
+      }
+      else if (r.st === 'in') { if (mv(r, ENDO[0] + rnd(-3, 3), ENDO[1], d, 95)) { r.st = 'endo'; r.T = 0; } }
+      else if (r.st === 'endo') {
+        if (r.T > .7) {
+          if (r.ldl) { fx.push({x: r.x, y: r.y, tx: LYSO[0], ty: LYSO[1], c: '#D9772B', r: 8, life: 0, max: 1.2, then: 'chol'}); ldl.splice(ldl.indexOf(r.ldl), 1); r.ldl = null; }
+          if (r.tag) { r.st = 'deg'; } else { const sl = freeSlot(); if (sl != null) { r.slot = sl; r.st = 'rec'; } }
+          r.T = 0;
+        }
+      }
+      else if (r.st === 'rec') { if (mv(r, SLOTS[r.slot], MY, d, 110)) { r.st = 'surf'; r.T = 0; } }
+      else if (r.st === 'deg') { if (mv(r, LYSO[0], LYSO[1], d, 90)) { r.st = 'gone'; if (r.tag) pc.splice(pc.indexOf(r.tag), 1); if (r.ldl) { ldl.splice(ldl.indexOf(r.ldl), 1); } } }
+      if (r.ldl && r.st !== 'surf') { r.ldl.x = r.x; r.ldl.y = r.y - 10; }
+      if (r.tag) { r.tag.x = r.x + 11; r.tag.y = r.st === 'surf' ? MY - 24 : r.y - 4; }
+    });
+    rec = rec.filter(r => r.st !== 'gone');
+    fx.forEach(f => { f.life += d; if (f.life >= f.max && f.then === 'chol') { f.then = null; for (let i = 0; i < 3; i++) fx.push({x: LYSO[0], y: LYSO[1], tx: ER[0] + rnd(-20, 20), ty: ER[1] + rnd(-10, 10), c: COL.fc, r: 3, life: 0, max: 1.6}); } });
+    fx = fx.filter(f => f.life < f.max);
+    if (tH > .5) { tH = 0; hist.push(ldl.length); if (hist.length > 80) hist.shift(); }
+  };
+  s.draw = (c, t) => {
+    c.fillStyle = '#FDF7F6'; c.fillRect(0, 0, 900, MY);
+    c.fillStyle = '#F6F3FB'; c.fillRect(0, MY, 900, 400 - MY);
+    c.strokeStyle = '#8FBFA9'; c.lineWidth = 7; c.beginPath(); c.moveTo(0, MY + 4); c.lineTo(900, MY + 4); c.stroke();
+    T(c, 'Plasma', 16, 20, {align: 'left', size: 12, color: '#9B5550', w: 700});
+    T(c, 'Hepatocito', 16, MY + 26, {align: 'left', size: 12, color: COL.green, w: 700});
+    // orgánulos
+    c.beginPath(); c.ellipse(ER[0], ER[1], 70, 32, 0, 0, TAU); c.fillStyle = '#E3F0FA'; c.fill(); c.strokeStyle = '#7FA8CF'; c.lineWidth = 1.5; c.stroke();
+    T(c, 'RE · SREBP-2', ER[0], ER[1] - 6, {size: 11.5, color: '#2F5F8F', w: 700});
+    T(c, opt.st.checked ? 'Estatina: ↑ síntesis de receptores' : 'síntesis de receptores', ER[0], ER[1] + 11, {size: 10.5, color: '#2F5F8F'});
+    circ(c, ENDO[0], ENDO[1], 34, '#FFF4E0', '#E3B65C', 1.5); T(c, 'Endosoma (pH ácido)', ENDO[0], ENDO[1] + 48, {size: 11, color: '#8A5A10', w: 700});
+    circ(c, LYSO[0], LYSO[1], 32, '#F7E0F0', '#B56FA0', 1.5); T(c, 'Lisosoma', LYSO[0], LYSO[1] + 46, {size: 11, color: '#7A3B6C', w: 700});
+    // receptores
+    rec.forEach(r => {
+      const inside = r.st !== 'surf' && r.st !== 'syn';
+      if (inside && r.st !== 'endo') { circ(c, r.x, r.y - 6, 20, 'rgba(143,191,169,.25)', '#8FBFA9', 1.5); }
+      const y = r.st === 'surf' ? MY : r.y;
+      c.strokeStyle = r.tag ? '#C2477A' : COL.green; c.lineWidth = 3.5; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(r.x, y + 4); c.lineTo(r.x, y - 14); c.moveTo(r.x - 8, y - 22); c.quadraticCurveTo(r.x, y - 10, r.x + 8, y - 22); c.stroke();
+    });
+    // LDL
+    ldl.forEach(l => { circ(c, l.x, l.y, 8, '#E8954A', COL.apoB, 2.4); });
+    // PCSK9
+    pc.forEach(p => { const blocked = opt.ab.checked; c.globalAlpha = blocked ? .55 : 1; c.beginPath(); c.moveTo(p.x, p.y); c.arc(p.x, p.y, 7, .5, TAU - .5); c.closePath(); c.fillStyle = '#C2477A'; c.fill(); if (blocked) { c.strokeStyle = '#2F5F8F'; c.lineWidth = 2.5; c.beginPath(); c.moveTo(p.x - 12, p.y - 12); c.lineTo(p.x - 6, p.y - 6); c.moveTo(p.x - 16, p.y - 8); c.lineTo(p.x - 12, p.y - 12); c.lineTo(p.x - 8, p.y - 16); c.stroke(); } c.globalAlpha = 1; });
+    fx.forEach(f => { const u = ease(f.life / f.max); c.globalAlpha = 1 - Math.pow(f.life / f.max, 4) * .8; circ(c, lerp(f.x, f.tx, u), lerp(f.y, f.ty, u), f.r, f.c); c.globalAlpha = 1; });
+    T(c, 'colesterol libre → ↓ HMG-CoA reductasa · ↓ SREBP-2', 480, 388, {size: 11, color: COL.muted});
+    // marcador
+    const surf = rec.filter(r => r.st === 'surf').length;
+    rrect(c, 640, 10, 250, 112, 12); c.fillStyle = 'rgba(255,255,255,.94)'; c.fill(); c.strokeStyle = COL.line; c.lineWidth = 1; c.stroke();
+    T(c, 'LDL en plasma', 654, 28, {align: 'left', size: 12, color: COL.muted}); T(c, String(ldl.length), 876, 28, {align: 'right', size: 16, d: true, color: '#B4532A', w: 700});
+    T(c, 'Receptores en superficie', 654, 50, {align: 'left', size: 12, color: COL.muted}); T(c, String(surf), 876, 50, {align: 'right', size: 16, d: true, color: COL.green, w: 700});
+    if (hist.length > 1) { const mx = 90; c.strokeStyle = '#B4532A'; c.lineWidth = 2; c.beginPath(); hist.forEach((v, i) => { const x = 654 + i * (222 / 79), y = 112 - v / mx * 50; i ? c.lineTo(x, y) : c.moveTo(x, y); }); c.stroke(); const lv = hist[hist.length - 1]; circ(c, 654 + (hist.length - 1) * (222 / 79), 112 - lv / mx * 50, 3.5, '#B4532A'); }
+    T(c, 'PCSK9', 30, 380, {align: 'left', size: 11, color: '#C2477A', w: 700}); c.beginPath(); c.moveTo(18, 380); c.arc(18, 380, 6, .5, TAU - .5); c.closePath(); c.fillStyle = '#C2477A'; c.fill();
+  };
+  $('rcReset').onclick = reset;
+  reset();
+  for (let i = 0; i < 300; i++) s.update(1 / 30);
+})();
+
+/* ============ 07 Lp(a) ============ */
+(function () {
+  const s = Scene('cvLA', 900, 420);
+  let n = 12; const pg = $('laPg');
+  const CX = 150, CY = 175, R = 78;
+  function kr(c, x, y, r, col, lab) { circ(c, x, y, r, '#fff', col, 2.6); c.beginPath(); c.arc(x, y, r * .45, .3, TAU - .3); c.strokeStyle = col; c.lineWidth = 1.6; c.stroke(); if (lab) T(c, lab, x, y + r + 10, {size: 9.5, color: col, w: 700}); }
+  s.draw = (c, t) => {
+    // partícula LDL
+    const g = c.createRadialGradient(CX - 20, CY - 20, 5, CX, CY, R); g.addColorStop(0, '#F7C96A'); g.addColorStop(1, '#D9772B'); circ(c, CX, CY, R, g, COL.pl, 6);
+    c.strokeStyle = COL.apoB; c.lineWidth = 10; c.lineCap = 'round'; c.beginPath(); for (let j = 0; j <= 80; j++) { const a = .25 + j / 80 * 5.4, rr = R + 5 + 2.5 * Math.sin(j * .9 + t * 3); const x = CX + Math.cos(a) * rr, y = CY + Math.sin(a) * rr; j ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke();
+    T(c, 'Partícula tipo LDL', CX, CY - 6, {d: true, size: 13, color: '#5A2E06'}); T(c, 'con ApoB-100', CX, CY + 12, {size: 12, color: COL.apoB, w: 700});
+    // puente disulfuro
+    const lx = CX + R + 8, ly = CY;
+    const kx9 = lx + 30, ky9 = ly + Math.sin(t * 2) * 3;
+    c.strokeStyle = '#E8B021'; c.lineWidth = 3; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(lx, ly); c.lineTo(kx9, ky9); c.stroke(); c.setLineDash([]);
+    T(c, 'S–S', lx + 14, ly + 16, {size: 11, color: '#A47A1E', w: 700});
+    // brazo superior: KIV-8 … KIV-3, KIV-2 ×n, KIV-1
+    const up = []; for (let k = 8; k >= 3; k--) up.push({l: 'KIV-' + k, col: '#B83B35'}); for (let k = 0; k < n; k++) up.push({l: '', col: '#E07B6F', rep: true}); up.push({l: 'KIV-1', col: '#B83B35'});
+    const avail = 900 - kx9 - 40, step = Math.min(30, avail / up.length), rK = Math.min(11, step * .46);
+    let px = kx9, py = ky9; const pos = [];
+    up.forEach((k, j) => { const x = kx9 + 16 + (j + 1) * step, y = ky9 - 70 + Math.sin(j * .45 - t * 2) * 26 - (j < 3 ? (3 - j) * -12 : 0); pos.push([x, y]); });
+    c.strokeStyle = COL.apoa; c.lineWidth = 2.4; c.beginPath(); c.moveTo(kx9, ky9); pos.forEach(p => c.lineTo(p[0], p[1])); c.stroke();
+    // brazo inferior
+    const low = [{l: 'KIV-10', col: '#B83B35'}, {l: 'KV', col: '#7A3C8F'}, {l: 'Proteasa', col: '#8C9692', sq: true}];
+    const lp = low.map((k, j) => [kx9 + 38 + j * 44, ky9 + 48 + j * 18 + Math.sin(t * 2 + j) * 5]);
+    c.beginPath(); c.moveTo(kx9, ky9); lp.forEach(p => c.lineTo(p[0], p[1])); c.stroke();
+    kr(c, kx9, ky9, 12, '#B83B35'); T(c, 'KIV-9', kx9, ky9 - 22, {size: 10, color: '#B83B35', w: 700});
+    up.forEach((k, j) => kr(c, pos[j][0], pos[j][1], rK, k.col, k.l && step > 17 ? k.l : ''));
+    low.forEach((k, j) => { if (k.sq) { rrect(c, lp[j][0] - 13, lp[j][1] - 13, 26, 26, 5); c.fillStyle = '#C9D0CD'; c.fill(); c.strokeStyle = '#8C9692'; c.lineWidth = 2; c.stroke(); T(c, 'Proteasa (inactiva)', lp[j][0] + 70, lp[j][1], {size: 11, color: '#6B7572', w: 700}); } else kr(c, lp[j][0], lp[j][1], 11, k.col, k.l); });
+    // llave KIV-2
+    const a = pos[6], bb = pos[6 + n - 1];
+    if (a && bb) { const yb = Math.min(...pos.slice(6, 6 + n).map(p => p[1])) - 22; c.strokeStyle = '#E07B6F'; c.lineWidth = 1.6; c.beginPath(); c.moveTo(a[0], yb + 6); c.lineTo(a[0], yb); c.lineTo(bb[0], yb); c.lineTo(bb[0], yb + 6); c.stroke(); T(c, `KIV-2 × ${n} (número variable)`, (a[0] + bb[0]) / 2, yb - 10, {size: 12, color: '#C25A4E', w: 700}); }
+    T(c, 'Cys4326 (ApoB-100) — Cys4057 (KIV-9)', lx + 90, CY + 128, {size: 11.5, color: COL.muted});
+    // plasminógeno
+    if (pg.checked) {
+      const y0 = 352; rrect(c, 20, y0 - 34, 860, 92, 14); c.fillStyle = '#F6F3FB'; c.fill();
+      T(c, 'Plasminógeno', 40, y0 - 18, {align: 'left', size: 12.5, color: COL.deep, w: 700});
+      ['K1', 'K2', 'K3', 'K4', 'K5'].forEach((k, j) => kr(c, 200 + j * 60, y0 + 10, 13, k === 'K4' ? '#B83B35' : k === 'K5' ? '#7A3C8F' : '#7FA99A', k));
+      rrect(c, 510, y0 - 4, 30, 28, 5); c.fillStyle = COL.leaf; c.fill(); T(c, 'Proteasa activa → plasmina', 640, y0 + 10, {size: 12, color: COL.green, w: 700});
+      T(c, 'La apo(a) copia el K4 (como KIV) y el K5, pero su proteasa no se activa: compite con el plasminógeno sobre la fibrina.', 450, y0 + 44, {size: 12, color: COL.muted});
+    } else {
+      T(c, 'Apo(a): cadena de dominios kringle IV (KIV-1 a KIV-10), un kringle V y un dominio proteasa inactivo', 450, 395, {size: 12, color: COL.muted});
+    }
+  };
+  function iso() {
+    const tot = 9 + n;
+    $('laNv').textContent = n;
+    const small = tot <= 22;
+    $('laIso').textContent = `${tot} dominios KIV · isoforma ${small ? 'pequeña' : tot <= 30 ? 'intermedia' : 'grande'}`;
+    $('laIsoX').textContent = small ? 'Las isoformas pequeñas se secretan con más eficiencia desde el hepatocito: se asocian con concentraciones plasmáticas altas de Lp(a) y con mayor riesgo.' : 'Las isoformas grandes se retienen más en el retículo del hepatocito y se secretan menos: suelen asociarse con concentraciones de Lp(a) más bajas.';
+    $('laLvl').style.width = Math.round(clamp(1 - (tot - 11) / 40, .06, 1) * 100) + '%';
+  }
+  $('laN').oninput = e => { n = +e.target.value; iso(); };
+  iso();
+  // calculadora
+  const MK = {mg: [[0, '0'], [30, '30'], [50, '50'], [100, '100'], [180, '180']], nmol: [[0, '0'], [75, '75'], [125, '125'], [250, '250'], [430, '430']]};
+  const MAX = {mg: 200, nmol: 480};
+  function calc() {
+    const u = $('laU').value, v = parseFloat($('laVal').value), G = $('laG'), f = $('laFlag');
+    G.querySelectorAll('.mk').forEach(m => m.remove());
+    MK[u].forEach(([x, l]) => { const m = document.createElement('span'); m.className = 'mk'; m.style.left = (x / MAX[u] * 100) + '%'; m.textContent = l; G.appendChild(m); });
+    if (isNaN(v) || v < 0) { f.className = 'flag bad'; f.textContent = 'Escribe un valor numérico mayor o igual a cero.'; return; }
+    $('laNeedle').style.left = `calc(${clamp(v / MAX[u], 0, 1) * 100}% - 2px)`;
+    let txt, bad = true;
+    if (u === 'mg') {
+      if (v < 30) { txt = 'Por debajo de 30 mg/dL: riesgo atribuible a la Lp(a) bajo.'; bad = false; }
+      else if (v <= 50) { txt = '30–50 mg/dL: zona intermedia. Interpreta en el contexto del riesgo global.'; bad = false; }
+      else if (v < 100) txt = 'Mayor de 50 mg/dL: factor potenciador del riesgo (ESC/EAS 2025, clase IIa; ACC/AHA 2026: ≈1,4 veces el riesgo). Justifica un descenso más intenso de la LDL.';
+      else if (v <= 180) txt = '100 mg/dL o más: riesgo de enfermedad aterosclerótica al menos del doble (ACC/AHA 2026).';
+      else txt = 'Mayor de 180 mg/dL: riesgo comparable al de la hipercolesterolemia familiar heterocigota (consenso EAS 2022).';
+    } else {
+      if (v < 75) { txt = 'Por debajo de 75 nmol/L: riesgo atribuible a la Lp(a) bajo.'; bad = false; }
+      else if (v <= 105) { txt = '75–105 nmol/L: zona intermedia. Interpreta en el contexto del riesgo global.'; bad = false; }
+      else if (v < 125) txt = 'Mayor de 105 nmol/L: factor potenciador del riesgo según ESC/EAS 2025 (clase IIa).';
+      else if (v < 250) txt = '125 nmol/L o más: factor potenciador del riesgo (ESC/EAS 2025 y ACC/AHA 2026, ≈1,4 veces el riesgo).';
+      else if (v <= 430) txt = '250 nmol/L o más: riesgo de enfermedad aterosclerótica al menos del doble (ACC/AHA 2026).';
+      else txt = 'Mayor de 430 nmol/L: riesgo comparable al de la hipercolesterolemia familiar heterocigota (consenso EAS 2022).';
+    }
+    f.className = 'flag ' + (bad ? 'bad' : 'ok'); f.textContent = txt;
+  }
+  $('laVal').oninput = calc; $('laU').onchange = calc; calc();
+})();
+
+
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
